@@ -1,0 +1,4 @@
+true: package(threads,core,str,camlp4)
+true: thread,debug
+
+"compile-ast": use_menhir
