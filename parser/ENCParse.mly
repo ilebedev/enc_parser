@@ -1,3 +1,4 @@
+
 %token <int> Int
 %token <string> String
 %token <string> Hex
@@ -15,6 +16,13 @@
 ISDT,STED,PRSP,PSDN,PRED,PROF,AGEN,COMT
 
 %token DSSI,DSDATASTRUCT
+%{
+        open Data
+        exception ENCParseError of string*string
+
+        let error k msg = 
+                raise (ENCParseError(k,msg))
+%}
 %token DSTR, AALL, NALL, NOMR, NOCR, NOGR, NOLR, NOIN, 
 NOCN, NOED, NOFA
 
@@ -59,23 +67,62 @@ eol:
 | EOL                                           {()}
 
 
-
+(* dataset identification field structure*)
 dsi_stmt:
-|        RCNM EQ Int eol                                {()}
-|        RCID EQ Int eol                                {()}
-|        EXPP EQ Int eol                                {()}
-|        INTU EQ Int eol                                {()}
-|        DSNM EQ String eol                             {()}
-|        EDTN EQ String eol                             {()}
-|        UPDN EQ String eol                             {()}
-|        UADT EQ String eol                             {()}
-|        ISDT EQ String eol                             {()}
-|        STED EQ Decimal eol                            {()}
-|        PRSP EQ Int eol                                {()}
-|        PSDN EQ String eol                             {()}
-|        PRED EQ String eol                             {()}
-|        PROF EQ Int eol                                {()}
+(*record name*)
+|        RCNM EQ Int eol                                
+        {let _ = assert($3=10) in ()}
+(*record identificatio number*)
+|  RCID EQ Int eol                                
+        {let id = $3 in ()}
+(*exchange purpose*)
+|  EXPP EQ Int eol                                
+        {
+                let exch = $3 in match exch with
+                | 1 -> () (*new dataset*)
+                | 2 -> () (*update dataset*)
+                | _ -> error "DSI.EXPP" "unknown exchange value"
+        }
+(*intended usage*)
+|  INTU EQ Int eol                                
+        {()}
+(*data set name*)
+|  DSNM EQ String eol                             
+        { 
+         let name = $3 in 
+         ()
+        }
+(*edition number*)
+|  EDTN EQ String eol                             
+        {()}
+(*update number, the index of the update*)
+|  UPDN EQ String eol                             {()}
+(*update application date, the application date*)
+|  UADT EQ String eol                             {()}
+(*issue date*)
+|  ISDT EQ String eol                             {()}
+(*edition number of the S-57 spec*)
+|  STED EQ Decimal eol                            {()}
+(*produce specification*)
+|  PRSP EQ Int eol                                
+        { match $3 with
+        | 1 -> () (*electronic navigational chart*)
+        | 2 -> () (* IHO object catalogue data dictionary*)
+        }
+(*a string identifying a non-standad product specification*)
+|  PSDN EQ String eol                             {()}
+(*a string identifying the dition number of th eproduct specifciation*)
+|  PRED EQ String eol                             {()}
+(*application profile information.*)
+|  PROF EQ Int eol                                
+        {match $3 with
+        | 1 -> () (*new nav chart*)
+        | 2 -> () (*revised nav chart*)
+        | 3 -> () (*IHO dictionary*)
+        }
+(*agency code*)
 |        AGEN EQ Int eol                                {()}
+(*a comment*)
 |        COMT EQ String eol                             {()}
 
 dsi_stmts:
@@ -83,35 +130,73 @@ dsi_stmts:
 | dsi_stmts dsi_stmt {()}
 
 dsst_stmt:
-| DSTR EQ Int eol                                       {()}
+| DSTR EQ Int eol                                       
+        { match $3 with
+        | 1 -> () (*cartographic spaghetti*)
+        | 2 -> () (*chain node*)
+        | 3 -> () (*planar graph*)
+        | 4 -> () (*full topologu*)
+        | 255 -> () (*topology not relevent*)
+        }
+(*lexical level used for AATF fields*)
 | AALL EQ Int eol                                       {()}
+(*lexical level used for NATF fields*)
 | NALL EQ Int eol                                       {()}
+(*number of meta records in dataset*)
 | NOMR EQ Int eol                                       {()}
+(*number of cartographic records in dataset*)
 | NOCR EQ Int eol                                       {()}
+(*number of geo records in dataset*)
 | NOGR EQ Int eol                                       {()}
+(*number of collection records in dataset*)
 | NOLR EQ Int eol                                       {()}
+(*number of isolated node records in dataset*)
 | NOIN EQ Int eol                                       {()}
+(*number of connected node records in dataset*)
 | NOCN EQ Int eol                                       {()}
+(*number of edge records in dataset*)
 | NOED EQ Int eol                                       {()}
+(*number of face records in dataset*)
 | NOFA EQ Int eol                                       {()}
 
 dsst_stmts:
 | dsst_stmts dsst_stmt {()}
 | dsst_stmt  {()}
 
+(*Data set parameter field structure. 7.3.2.1*)
 dspar_stmt:
-|        RCNM EQ Int eol                                {()}
-|        RCID EQ Int eol                                {()}
-|        HDAT EQ Int eol                                {()}
+|        RCNM EQ Int eol                                
+        {let _ = assert($3 == 20) in ()}
+|        RCID EQ Int eol                                
+        {let id = $3 in ()}
+(*horizontal geodetic datum*)
+|        HDAT EQ Int eol                                
+        {()}
+(*vertical geodetic datum*)
 |        VDAT EQ Int eol                                {()}
+(*sounding datum*)
 |        SDAT EQ Int eol                                {()}
+(*compilation scale of the data. for example 1:x is encoded as x.*)
 |        CSCL EQ Int eol                                {()}
+(*units of depth measurement*)
 |        DUNI EQ Int eol                                {()}
+(*units of height measurement*)
 |        HUNI EQ Int eol                                {()}
+(*units of positional accuracy *)
 |        PUNI EQ Int eol                                {()}
-|        COUN EQ Int eol                                {()}
+(*coordinate units *)
+|        COUN EQ Int eol                                
+        {
+        match $3 with 
+        | 1 -> () (*latitude/longitude*)
+        | 2 -> () (*easting/northing*)
+        | 3 -> () (*units on chart or map.*)
+        }
+(*floating point to integer multiplication factor for coordinate*)
 |        COMF EQ Int eol                                {()}
+(*floating point to integer multiplication factor for sounding values*)
 |        SOMF EQ Int eol                                {()}
+(*comment*)
 |        COMT EQ String eol                                {()}
 
 dspar_stmts:
