@@ -3,13 +3,15 @@ open BSBLex
 open BSBParse
 open KAPLex
 open KAPParse
+open ENCLex
+open ENCParse
 
 
 module Parser : 
 sig
         val parse_kap : string -> unit
         val parse_bsb : string -> unit
-
+        val parse_enc : string -> unit
 end = 
 struct
 
@@ -44,6 +46,10 @@ struct
         
         let parse_bsb (filename:string) =
                 let do_parse chan = BSBParse.toplevel BSBLex.token chan in 
+                parse_file filename do_parse
+
+        let parse_enc (filename:string) =
+                let do_parse chan = ENCParse.toplevel ENCLex.token chan in 
                 parse_file filename do_parse
 
 

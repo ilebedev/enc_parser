@@ -11,30 +11,29 @@ exception MainException of string*string;;
 let raise_error header msg = 
         raise (MainException(header,msg))
 
-let gen_output (kap:string) (bsb:string) (out_file:string) (out_type:output_type) : unit =
+let gen_output_from_bsb (bsb:string) (out_file:string) (out_type:output_type) : unit =
         let _ = print_string "== Parsing BSB ==\n" in
-        let bsb_data = Parser.parse_bsb bsb in 
-        let _ = print_string "== Parsing KAP ==\n" in
-        let kap_data = Parser.parse_kap kap in 
+        let data = Parser.parse_bsb bsb in 
         ()
+
+let gen_output_from_enc (enc:string) (out_file:string) (out_type:output_type) : unit =
+        let _ = print_string "== Parsing ENC ==\n" in
+        let data = Parser.parse_enc enc in 
+        ()
+
 
 let command =
   Command.basic
-    ~summary:"parse ENC files"
+    ~summary:"parse BSB files"
     Command.Spec.(
       empty
-      +> flag "-kap" (optional string) ~doc:"kap file."
-      +> flag "-bsb" (optional string) ~doc:"bsb file."
+      +> flag "-enc" (optional string) ~doc:"enc file."
+      +> flag "-bsb" (optional string) ~doc:"bsb file. kap files are
+      automatically inferred."
       +> flag "-output" (optional string) ~doc:"output."
       +> flag "-filetype" (optional string) ~doc:"output filetype."
     )
-    (fun kap bsb output filetype () ->
-      let kap,bsb = match kap,bsb with
-        | Some(k),Some(b)-> k,b
-        | None,Some(_)-> raise_error "cmd" "must provide kap file."
-        | Some(_),None-> raise_error "cmd" "must provide bsb file"
-        | _ -> raise_error "cmd" "must provide kap and bsb file"
-      in
+    (fun enc bsb output filetype () ->
       let outfile = match output with 
         |Some(name) -> name
         |None -> "out.txt"
@@ -44,8 +43,13 @@ let command =
         |Some("raw") -> OutTypRaw
         | None -> OutTypJson
       in
-      let _ = gen_output kap bsb outfile outtype in 
-      ()
+      match bsb,enc with
+        | Some(_),Some(_) -> raise_error "cmd" "cannot provide both enc and bsb"
+        | Some(b),None-> gen_output_from_bsb b outfile outtype
+        | None, Some(e)-> gen_output_from_enc e outfile outtype
+        | None,None-> raise_error "cmd" "must provide bsb or enc file"
+       
+
     )
 
 let main () = Command.run command;;

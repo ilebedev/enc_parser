@@ -1,5 +1,4 @@
 %token <int> Int
-%token <string> KId
 %token <float> Decimal
 %token <string> Token
 %token EOF
