@@ -1,0 +1,144 @@
+NATIONAL OCEANIC AND ATMOSPHERIC ADMINISTRATION
+
+US5MA11E - BOSTON INNER HARBOR
+
+INDEX:
+POLLUTION REPORTS
+AIDS TO NAVIGATION
+CAUTION - TEMPORARY CHANGES
+CAUTION - DREDGED AREAS
+NOAA WEATHER RADIO BROADCASTS
+SUPPLEMENTAL INFORMATION
+RACING BUOYS
+WARNING - PRUDENT MARINER
+RADAR REFLECTORS
+AUTHORITIES
+NOTE A
+NOTE B
+CAUTION - BASCULE BRIDGE CLEARANCES
+CAUTION - SUBMARINE PIPELINES AND CABLES
+NOTE Z - NO-DISCHARGE ZONE, 40 CFR 140
+TIDAL INFORMATION
+ADDITIONAL INFORMATION
+
+
+NOTES: 
+
+
+POLLUTION REPORTS
+Report all spills of oil and hazardous substances to the National Response Center via 
+1-800-424-8802 (toll free), or to the nearest U.S. Coast Guard facility if telephone 
+communication is impossible (33 CFR 153).
+
+
+AIDS TO NAVIGATION
+Consult U.S. Coast Guard Light List for supplemental information concerning aids to 
+navigation.
+
+
+CAUTION - TEMPORARY CHANGES
+Temporary changes or defects in aids to navigation are not indicated. See 
+Local Notice to Mariners.
+During some winter months or when endangered by ice, certain aids to navigation are 
+replaced by other types or removed.  For details see U.S. Coast Guard Light List.
+
+
+CAUTION - DREDGED AREAS
+Improved channels are subject to shoaling, particularly at the edges.
+
+
+NOAA WEATHER RADIO BROADCASTS
+The NOAA Weather Radio stations listed below provide continuous weather 
+broadcasts. The reception range is typically 37 to 74 km / 20 to 40 nautical 
+miles from the antenna site, but can be as much as 186 km / 100 nautical 
+miles for stations at high elevations.
+
+Boston, MA			KHB-35		162.475 MHz
+Essex Marine, MA        	WNG-574         162.425 MHZ
+
+
+SUPPLEMENTAL INFORMATION
+Consult U.S. Coast Pilot 1 for important supplemental information.
+
+
+RACING BUOYS
+Racing buoys within the limits of this chart are not shown thereon.  Information may be 
+obtained from the U.S. Coast Guard District Offices as racing and other private buoys are 
+not all listed in the U.S. Coast Guard Light List.
+
+
+WARNING - PRUDENT MARINER
+The prudent mariner will not rely solely on any single aid to navigation, particularly on 
+floating aids. See U.S. Coast Guard Light List and U.S. Coast Pilot for details.
+
+
+RADAR REFLECTORS
+Radar Reflectors have been placed on many 
+floating aids to navigation. Individual radar 
+reflector identification on these aids has been 
+omitted from this chart.
+
+
+AUTHORITIES
+Hydrography and topography by the National Ocean Service, Coast 
+Survey, with additional data from the Corps of Engineers, and U.S. 
+Coast Guard.
+
+
+NOTE A
+Navigation regulations are published in Chapter 2, U.S. 
+Coast Pilot 1. Additions or revisions to Chapter 2 are pub-
+lished in Notice to Mariners. Information concerning 
+the regulations may be obtained at the Office of the Com-
+mander, 1st Coast Guard District in Boston, MA or at the 
+Office of the District Engineer, Corps of Engineers in 
+Concord, MA.
+Refer to charted regulation section numbers.
+
+
+NOTE B
+An Act of Congress, Public Law 90-312, declared the water-
+front area to be nonnavigable.
+
+
+CAUTION - BASCULE BRIDGE CLEARANCES
+For bascule bridges, whose spans do not 
+open to a full upright or vertical position, unlimited 
+vertical clearance is not available for the entire 
+charted horizontal clearance.
+
+
+CAUTION - SUBMARINE PIPELINES AND CABLES
+Additional uncharted submarine pipelines and submarine cables may exist within the area of 
+this chart. Not all submarine pipelines and submarine cables are required to be buried, and 
+those that were originally buried may have become exposed. Mariners should use extreme 
+caution when operating vessels in depths of water comparable to their draft in areas where 
+pipelines and cables may exist, and when anchoring, dragging, or trawling.
+Covered wells may be marked by lighted or unlighted buoys.
+
+
+NOTE Z - NO-DISCHARGE ZONE, 40 CFR 140
+Under the Clean Water Act, Section 312, all 
+vessels operating within a No-Discharge Zone (NDZ) are completely prohibited 
+from discharging any sewage, treated or untreated, into the waters. Commercial
+vessel sewage shall include graywater. All vessels with an installed marine 
+sanitation device (MSD) that are navigating, moored, anchored, or docked 
+within a NDZ must have the MSD disabled to prevent the overboard discharge of 
+sewage (treated or untreated) or install a holding tank. Regulations for the 
+NDZ are contained in the U.S. Coast Pilot. Additional information concerning 
+the regulations and requirements may be obtained from the Environmental 
+Protection Agency (EPA) web site: 
+http://www.epa.gov/owow/oceans/regulatory/vessel_sewage/
+
+
+
+TIDAL INFORMATION
+For tidal information see the NOS Tide Table publication or go to 
+http://co-ops.nos.noaa.gov
+
+
+ADDITIONAL INFORMATION
+Additional information can be obtained at www.nauticalcharts.noaa.gov
+
+
+END OF FILE

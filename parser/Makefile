@@ -1,11 +1,9 @@
 
-#DEPS=*.ml *.mly *.mll
 DEPS=*.ml
-#COMP_DEPS=*.mly *.mll
-COMP_DEPS=
+COMP_DEPS=*.mly *.mll
 #ARGS=C_INCLUDE_PATH=/opt/local/include LIBRARY_PATH=/opt/local/lib CC=gcc-mp-4.8
 ARGS=
-FLAGS=-use-ocamlfind -use-menhir -menhir "menhir --infer --explain"
+FLAGS= -no-hygiene -use-ocamlfind -use-menhir -menhir "menhir --infer --explain"
 DEBUG_FLAGS=-cflag -g
 APPNAME=parser
 

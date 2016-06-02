@@ -48,9 +48,14 @@ struct
                 let do_parse chan = BSBParse.toplevel BSBLex.token chan in 
                 parse_file filename do_parse
 
-        let parse_enc (filename:string) =
+        let _parse_enc (filename:string) =
                 let do_parse chan = ENCParse.toplevel ENCLex.token chan in 
                 parse_file filename do_parse
-
+        
+        let parse_enc(filename:string) = 
+                let tmpfile = "__tmp__.txt" in 
+                let _ = Sys.command ("c-src/s57parse "^filename^" > "^tmpfile) in
+                let _ = _parse_enc tmpfile in 
+                ()
 
 end
