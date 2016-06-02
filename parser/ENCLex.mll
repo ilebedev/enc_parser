@@ -15,6 +15,7 @@
 }
 
 let addr = '0''x'['0'-'9''A'-'F']+
+let string_reg = '`'[^'\n']*'\'' 
 let integer = '-'?['0'-'9']+
 let decimal = '-'?['0'-'9']+'.'['0'-'9']*
 let letter = ['A'-'Z''a'-'z'] 
@@ -103,14 +104,38 @@ rule token = parse
 | "TOPI"                                {TOPI}
 | "MASK"                                {MASK}
 
+| "Feature record identifier field"     {DSFEATID}
+| "FRID"                                {FRID}
+| "PRIM"                                {PRIM}
+| "GRUP"                                {GRUP}
+| "OBJL"                                {OBJL}
+
+| "Feature object identifier field"     {DSFEATOBJID}
+| "FOID"                                {FOID}
+| "FIDN"                                {FIDN}
+| "FIDS"                                {FIDS}
+
+| "Feature record attribute field"      {DSFEATATTR}
+| "ATTF"                                {ATTF}
+
+| "Feature record to spatial record pointer field"      {DSFEATSPAT}
+| "FSPT"                                                {FSPT}
+
+| "Feature record to feature object pointer field"      {DSFEATOBJPTR}
+| "FFPT"                                                {FFPT}
+| "LNAM"                                                {LNAM}
+| "RIND"                                                {RIND}
+
 | "bytes"                       {BYTES}
 | "="                           {EQ}
 | ":"                           {COLON}
 | "/"                           {FSLASH}
 | "("                           {OPARAN}
 | ")"                           {CPARAN}
-| '`'[^'\'']*'\'' as s              {String(s)}
-| addr as i                  {Addr(i)}
+| string_reg as s              {String(s)}
+| addr as i                  {Hex(i)}
 | decimal as d                  {Decimal(float_of_string d)}
 | integer as i                  {Int(int_of_string i)}
+| eof                           {EOF}
 | _       as q                  {report lexbuf q}
+
