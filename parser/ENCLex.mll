@@ -14,6 +14,7 @@
                 error "ENC Lexer Error" ("At offset "^offset^": unexpected character <"^chr^">")
 }
 
+let addr = '0''x'['0'-'9''A'-'F']+
 let integer = '-'?['0'-'9']+
 let decimal = '-'?['0'-'9']+'.'['0'-'9']*
 let letter = ['A'-'Z''a'-'z'] 
@@ -25,10 +26,9 @@ rule token = parse
 | "ISO/IEC 8211 Record Identifier" {RECORDID}
 | "Record"                      {RECORD}
 | "Field"                       {FIELD}
-| "VRID"                        {VRID}
-| "SG3D"                        {SG3D}
 
 | "DSID"                        {DSID}
+| "Data Set Identification"        {DSDATASET}
 
 | "RCNM"                        {RCNM}
 | "RCID"                        {RCID}
@@ -48,11 +48,61 @@ rule token = parse
 | "COMT"                        {COMT}
 
 | "DSSI"                        {DSSI}
+| "Data set structure information field"        {DSDATASTRUCT}
 
 | "DSTR"                        {DSTR}
+| "AALL"                        {AALL}
+| "NALL"                        {NALL}
+| "NOMR"                        {NOMR}
+| "NOCR"                        {NOCR}
+| "NOGR"                        {NOGR}
+| "NOLR"                        {NOLR}
+| "NOIN"                        {NOIN}
+| "NOCN"                        {NOCN}
+| "NOED"                        {NOED}
+| "NOFA"                        {NOFA}
 
-| "Data Set Identification"        {DSDATASET}
-| "Data set structure information field"        {DSDATASTRUCT}
+| "DSPM"                        {DSPM}
+| "Data set parameter field"                        {DSPARAM}
+| "HDAT"                        {HDAT}
+| "VDAT"                        {VDAT}
+| "SDAT"                        {SDAT}
+| "CSCL"                        {CSCL}
+| "DUNI"                        {DUNI}
+| "HUNI"                        {HUNI}
+| "PUNI"                        {PUNI}
+| "COUN"                        {COUN}
+| "COMF"                        {COMF}
+| "SOMF"                        {SOMF}
+
+
+| "Vector record identifier field"      {DSVECTID}
+| "VRID"                        {VRID}
+| "RVER"                        {RVER}
+| "RUIN"                        {RUIN}
+
+| "3-D coordinate (sounding array) field" {DS3DCOORDS}
+| "SG3D"                        {SG3D}
+| "YCOO"                        {YC00}
+| "XCOO"                        {XC00}
+| "VE3D"                        {VE3D}
+
+| "2-D coordinate field"        {DS2DCOORD}
+| "SG2D"                        {SG2D}
+
+| "Vector record attribute field"       {DSVECTATTR}
+| "ATTV"                                {ATTV}
+| "ATTL"                                {ATTL}
+| "ATVL"                                {ATVL}
+
+| "Vector record pointer field"         {DSVECTPTR}
+| "VRPT"                                {VRPT}
+| "NAME"                                {NAME}
+| "USAG"                                {USAG}
+| "ORNT"                                {ORNT}
+| "TOPI"                                {TOPI}
+| "MASK"                                {MASK}
+
 | "bytes"                       {BYTES}
 | "="                           {EQ}
 | ":"                           {COLON}
@@ -60,6 +110,7 @@ rule token = parse
 | "("                           {OPARAN}
 | ")"                           {CPARAN}
 | '`'[^'\'']*'\'' as s              {String(s)}
+| addr as i                  {Addr(i)}
 | decimal as d                  {Decimal(float_of_string d)}
 | integer as i                  {Int(int_of_string i)}
 | _       as q                  {report lexbuf q}
