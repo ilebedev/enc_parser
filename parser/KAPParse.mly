@@ -6,6 +6,7 @@
 %token EOF
 %token EOC
 
+%token BANG
 %token COMMA
 %token VBAR
 %token BSLASH
@@ -24,6 +25,15 @@
 %type <unit> toplevel
 %%
 
+stmt:
+|        BANG EOC {()}
+;
+stmts:
+|        stmts stmt {()}
+|        stmt {()}
+;
+
 toplevel:
-        EOF {()}
+|        stmts {()}
+|        EOF {()}
 ;

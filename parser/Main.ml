@@ -12,8 +12,10 @@ let raise_error header msg =
         raise (MainException(header,msg))
 
 let gen_output (kap:string) (bsb:string) (out_file:string) (out_type:output_type) : unit =
-        let kap_data = Parser.parse_kap kap in 
+        let _ = print_string "== Parsing BSB ==\n" in
         let bsb_data = Parser.parse_bsb bsb in 
+        let _ = print_string "== Parsing KAP ==\n" in
+        let kap_data = Parser.parse_kap kap in 
         ()
 
 let command =

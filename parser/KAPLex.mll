@@ -25,23 +25,24 @@ rule binary = parse
 *)
 
 rule token = parse
-| [' ' '\t'] {token lexbuf}
-| '\n'[' ']+      {Lexing.new_line lexbuf; token lexbuf}
-| '\n'            {Lexing.new_line lexbuf; EOC}
-| "\\"            {BSLASH}
-| "/"             {FSLASH}
-| "|"             {VBAR}
-| ","             {COMMA}
-| "VER"          {VER}
-| "BSB"          {BSB}
-| "OST"          {OST}
-| "IFM"          {IFM}
-| "RGB"          {RGB}
-| "KNP"          {KNP}
-| "ERR"           {ERR}
-| decimal as d    {Decimal(float_of_string d)}
-| intgr as i      {Int(int_of_string i)}
-| token as t      {Token(t)}
+| ['\n''\r']['\t'' ']+          {Lexing.new_line lexbuf; token lexbuf}
+| ['\n''\r']                    {Lexing.new_line lexbuf; EOC}
+| [' ' '\t']                    {token lexbuf}
+| "!"                           {BANG}
+| "\\"                          {BSLASH}
+| "/"                           {FSLASH}
+| "|"                           {VBAR}
+| ","                           {COMMA}
+| "VER"                         {VER}
+| "BSB"                         {BSB}
+| "OST"                         {OST}
+| "IFM"                         {IFM}
+| "RGB"                         {RGB}
+| "KNP"                         {KNP}
+| "ERR"                         {ERR}
+| decimal as d                  {Decimal(float_of_string d)}
+| intgr as i                    {Int(int_of_string i)}
+| token as t                    {Token(t)}
 (*| header_term     {binary lexbuf}*)
-| eof         {raise Eof}
-| _ as q      {report lexbuf q}
+| eof                           {raise Eof}
+| _ as q                        {report lexbuf q}
