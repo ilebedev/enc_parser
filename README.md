@@ -7,9 +7,9 @@ ENC charts published by [NOAA][noaa] are available [here][enc_charts]. An [examp
 
 ###Setting up your enviornment
 
-This project requires `ocaml` and its package manager, `opam`. To set up both on a Debian/Ubuntu linux, the following is sufficient (note that `<enc_parser>` refers to the `parser`):
+This project requires `ocaml` and its package manager, `opam`. To set up both on a Debian/Ubuntu linux, the following is sufficient (note that `<parser>` refers to the `./parser/` directory):
 
-    cd <enc_parser>
+    cd <parser>
     sudo add-apt-repository ppa:avsm/ppa
     sudo apt-get update
     sudo apt-get install ocaml opam
@@ -19,7 +19,7 @@ This project requires `ocaml` and its package manager, `opam`. To set up both on
 
 You also must build a native tool (in `./c-src`) to parse the ISO/IEC 8211 format into an intermediate representation. To do so, simply:
 
-    cd <enc_parser>/c-src
+    cd <parser>/c-src
     make
 
 ###Related work
