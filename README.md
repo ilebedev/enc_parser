@@ -34,6 +34,10 @@ OpenCPN is an excellent, although opinionated and bulky open source chart plotte
 #### Other ENC parsers on Github
 [This one](https://github.com/tburke/ihos57) does not look like it's going to happen, but [this one](https://github.com/KaiAbuSir/EncLib) may one day do some good.
 
+### Acknowledgements
+
+This project uses the [iso8211lib tool](http://home.gdal.org/projects/iso8211/) (copied [here](https://github.com/vladimir-lu/iso8211lib))
+
 
 [enc_charts]: http://www.charts.noaa.gov/InteractiveCatalog/nrnc.shtml#mapTabs-2
 [noaa]: http://www.noaa.gov/
