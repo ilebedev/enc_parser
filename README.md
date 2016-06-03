@@ -7,7 +7,7 @@ ENC charts published by [NOAA][noaa] are available [here][enc_charts]. An [examp
 
 ###Setting up your enviornment
 
-This project requires `ocaml` and its package manager, `opam`. To set up both on a Debian/Ubuntu linux, the following is sufficient (note that `<parser>` refers to the `./parser/` directory):
+This project requires `ocaml` and its package manager, `opam`, as well as a few modules. To set up both on a Debian/Ubuntu linux, the following is sufficient (note that `<parser>` refers to the `./parser/` directory):
 
     cd <parser>
     sudo add-apt-repository ppa:avsm/ppa
