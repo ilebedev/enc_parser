@@ -5,6 +5,23 @@ The US [NOAA][noaa] publishes free and excellent marine cartography, which is of
 
 ENC charts published by [NOAA][noaa] are available [here][enc_charts]. An [example enc chart][enc_example] (of the Boston inner harbor) encodes a superset of data visualized in this printable [official marine chart][printable_chart_example].
 
+###Setting up your enviornment
+
+This project requires `ocaml` and its package manager, `opam`. To set up both on a Debian/Ubuntu linux, the following is sufficient (note that `<enc_parser>` refers to the `parser`):
+
+    cd <enc_parser>
+    sudo add-apt-repository ppa:avsm/ppa
+    sudo apt-get update
+    sudo apt-get install ocaml opam
+    opam init
+    eval `opam config env`
+    opam install ocamlfind core menhir
+
+You also must build a native tool (in `./c-src`) to parse the ISO/IEC 8211 format into an intermediate representation. To do so, simply:
+
+    cd <enc_parser>/c-src
+    make
+
 ###Related work
 
 A handful of parsers exist.
