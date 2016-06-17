@@ -4,6 +4,7 @@ type exchange_purpose = EXNew | EXUpdate
 type intended_usage = IUOverview | IUGeneral | IUCoastal
         | IUApproach | IUHarbor | IUBerthing | IUUnknown 
 
+type application_profile = APElecNavChart | APElecNavRevision | APIhoObjCatalog
 
 type month = September | October | November | December | January
         | February | March | April | May | June | July | August 
@@ -44,13 +45,18 @@ type date = month*int*int
 type iho_object_id = int
 
 
-type dataset_parameter = {
-        horiz : int;
-        vert : int;
-        sounding : int;
-
-        coordinate_units : coordinate_units;
-
+type dataset_coord_info = {
+        mutable  horiz : int;
+        mutable  vert : int;
+        mutable  sounding : int;
+        mutable  compilation_scale: int;
+        mutable  depth_units : int;
+        mutable  height_units : int;
+        mutable  positional_accuracy : int;
+        mutable  coord_units : coordinate_units;
+        mutable  coord_mult_factor : int;
+        mutable  sound_mult_factor : int;
+        mutable  comment: string;
 }
 type lexical_levels = {
         mutable attf_lex : lexical_level;
@@ -73,12 +79,14 @@ type dataset_info = {
         mutable name : string;
         mutable edition: int;
         mutable update: int;
-        mutable update_app_date : date;
-        mutable issue_date : date;
+        mutable update_app_date : date option;
+        mutable issue_date : date option;
+        mutable app_profile : application_profile;
         mutable agency_id : (int*(iho_object_id option));
         mutable comment : string;
         mutable stats : dataset_stats;
         mutable lex : lexical_levels; 
+        mutable coord_info : dataset_coord_info;
 }
 
 

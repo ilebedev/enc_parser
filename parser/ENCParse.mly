@@ -63,6 +63,12 @@ NOCN, NOED, NOFA
 %token DSFEATOBJPTR, FFPT
 %token LNAM, RIND
 
+%token DSFEATSPATCTRL, FSPC
+%token FSUI FSIX NSPT 
+
+%token DSFEATOBJPTRCTRL, FFPC
+%token FFUI FFIX NFPT
+
 %token RECORDID
 
 %start toplevel
@@ -72,6 +78,7 @@ NOCN, NOED, NOFA
 
 eol:
 | EOL                                           {()}
+| EOF                                           {()}
 (* dataset identification field structure*)
 dsi_stmt:
 (*record name*)
@@ -127,8 +134,13 @@ dsi_stmt:
 }
 (*update application date, the application date*)
 |  UADT EQ String eol  {
-        let uadt = int_of_string $3 in 
-        let upd_app_date = ENCParseLib.int_to_date uadt in
+        let upd_app_date = 
+                if $3 = "        " then
+                        None
+                else
+                        let uadt = int_of_string $3 in 
+                        Some (ENCParseLib.int_to_date uadt) 
+        in
         let _ = ENCParseLib.upd_dataset _state 
                 (fun ds -> stmt (ds.update_app_date <- upd_app_date) ds )
         in
@@ -136,8 +148,13 @@ dsi_stmt:
 }
 (*issue date*)
 |  ISDT EQ String eol {
-        let uadt = int_of_string $3 in 
-        let upd_issue_date = ENCParseLib.int_to_date uadt in
+        let upd_issue_date = 
+                if $3 = "        " then
+                        None
+                else
+                        let uadt = int_of_string $3 in 
+                        Some (ENCParseLib.int_to_date uadt) 
+        in
         let _ = ENCParseLib.upd_dataset _state 
                 (fun ds -> stmt (ds.issue_date <- upd_issue_date) ds )
         in
@@ -165,7 +182,10 @@ dsi_stmt:
 }
 (*application profile information.*)
 |  PROF EQ Int eol   {
-        let _ = assert($3 = 1) in 
+        let code = ENCParseLib.int_to_application_profile $3 in
+        let _ = ENCParseLib.upd_dataset _state
+                (fun ds -> stmt (ds.app_profile <- code) ds)
+        in 
         ()
 }
 (*agency code*)
@@ -297,59 +317,94 @@ dspar_stmt:
 (*horizontal geodetic datum*)
 |  HDAT EQ Int eol {
         let horiz_val = $3 in
+        let _ = ENCParseLib.upd_dataset_coord_info _state
+                (fun met -> stmt (met.horiz <- horiz_val) met)
+        in
         () 
 }
 (*vertical geodetic datum*)
 |  VDAT EQ Int eol { 
         let vert_val = $3 in
+        let _ = ENCParseLib.upd_dataset_coord_info _state
+                (fun met -> stmt (met.vert <- vert_val) met)
+        in
         () 
 }
 
 (*sounding datum*)
 |  SDAT EQ Int eol  { 
         let snd_val = $3 in
+        let _ = ENCParseLib.upd_dataset_coord_info _state
+                (fun met -> stmt (met.sounding <- snd_val) met)
+        in
         () 
 }
 
 (*compilation scale of the data. for example 1:x is encoded as x.*)
 |  CSCL EQ Int eol   { 
         let comp_scale = $3 in
+        let _ = ENCParseLib.upd_dataset_coord_info _state
+                (fun met -> stmt (met.compilation_scale <- comp_scale) met)
+        in
         () 
 }
 
 (*units of depth measurement*)
 |  DUNI EQ Int eol {
-        let depth_units = $3 in 
+        let depth_units = $3 in
+        let _ = ENCParseLib.upd_dataset_coord_info _state 
+                (fun met -> stmt (met.depth_units <- depth_units) met)
+        in 
         ()
 }
 (*units of height measurement*)
 |  HUNI EQ Int eol {
         let height_unit = $3 in 
+        let _ = ENCParseLib.upd_dataset_coord_info _state 
+                (fun met -> stmt (met.height_units <- height_unit) met)
+        in 
         ()
 }
 (*units of positional accuracy *)
 |  PUNI EQ Int eol {
-        let pos_accuracy_unit = $3 in 
+        let pos = $3 in 
+        let _ = ENCParseLib.upd_dataset_coord_info _state
+                (fun met -> stmt (met.positional_accuracy <- pos) met)
+        in
         ()
 }      
 (*coordinate units *)
 |  COUN EQ Int eol {
-        let coordinate_units = $3 in 
+        let coord_units = ENCParseLib.int_to_coordinate_unit $3 in 
+        let _ = ENCParseLib.upd_dataset_coord_info _state
+                (fun met -> stmt (met.coord_units <- coord_units) met)
+        in
         ()
 }
 (*floating point to integer multiplication factor for coordinate*)
 |  COMF EQ Int eol {
         let coordinate_mult_factor = $3 in 
+        let _ = ENCParseLib.upd_dataset_coord_info _state
+                (fun met -> stmt (met.coord_mult_factor <-
+                        coordinate_mult_factor) met)
+        in
         ()
 }
 (*floating point to integer multiplication factor for sounding values*)
 |  SOMF EQ Int eol {
         let sounding_mult_factor = $3 in 
+        let _ = ENCParseLib.upd_dataset_coord_info _state
+                (fun met -> stmt (met.sound_mult_factor <-
+                        sounding_mult_factor) met)
+        in
         ()
 }
 (*comment*)
 |   COMT EQ String eol  {
         let comment = $3 in 
+        let _ = ENCParseLib.upd_dataset_coord_info _state
+                (fun met -> stmt (met.comment <- comment) met)
+        in
         ()
 }
 
@@ -490,6 +545,21 @@ featspat_stmts:
 | featspat_stmt                               {()}
 | featspat_stmts featspat_stmt                {()}
 
+featspat_ctrl_stmt:
+| FSUI EQ Int eol {
+        ()
+}
+| FSIX EQ Int eol {
+        ()
+}
+| NSPT EQ Int eol {
+        ()
+}
+
+featspat_ctrl_stmts:
+| featspat_ctrl_stmt                            {()}
+| featspat_ctrl_stmts featspat_ctrl_stmt        {()}
+
 featobjptr_stmt:
 | LNAM EQ Hex eol  {
         let _ = ENCParseLib.long_name_to_feature_obj_id $3 in 
@@ -501,6 +571,22 @@ featobjptr_stmt:
 featobjptr_stmts:
 | featobjptr_stmt                              {()}
 | featobjptr_stmts featobjptr_stmt             {()}
+
+featobjptr_ctrl_stmt:
+| FFUI EQ Int eol {
+        ()
+}
+| FFIX EQ Int eol {
+        ()
+}
+| NFPT EQ Int eol {
+        ()
+}
+
+featobjptr_ctrl_stmts:
+| featobjptr_ctrl_stmt                            {()}
+| featobjptr_ctrl_stmts featobjptr_ctrl_stmt        {()}
+
 
 stmt:
 |        RECORD Int OPARAN Int BYTES CPARAN eol              {
@@ -554,8 +640,13 @@ stmt:
 }
 |        FIELD FFPT COLON DSFEATOBJPTR eol featobjptr_stmts  {
   
+}
+|        FIELD FSPC COLON DSFEATSPATCTRL eol featspat_ctrl_stmts {
+        
 };
+|        FIELD FFPC COLON DSFEATOBJPTRCTRL eol featobjptr_ctrl_stmts {
 
+};
 stmts:
 |        stmts stmt {()}
 |        stmt {()}

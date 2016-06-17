@@ -26,6 +26,21 @@ struct
                 n_edge=0;
                 n_face=0;
         }
+        let make_dataset_coord_info () =
+        {
+        horiz = 0;
+        vert = 0;
+        sounding = 0;
+        compilation_scale= 0;
+        depth_units = 0;
+        height_units = 0;
+        positional_accuracy = 0;
+        coord_units = CULatLong;
+        coord_mult_factor = 0;
+        sound_mult_factor = 0;
+        comment= "";
+        }
+
 
         let make_dataset_info () = 
                 {
@@ -35,16 +50,18 @@ struct
                         edition=1;
                         update=0;
                         (*all changes before this one have been applied*)
-                        update_app_date=(January,1,1995);
+                        update_app_date=None;
                         (*date on which this was made available*)
-                        issue_date=(January,1,1995);
+                        issue_date=None;
                         name="(no name)";
                         (*the intended usage*)
                         usage=IUUnknown;
                         agency_id=(0,None);
                         comment="";
+                        app_profile=APElecNavChart;
                         stats=make_dataset_stats ();
                         lex=make_lexical_levels ();
+                        coord_info=make_dataset_coord_info ();
                 }
         let init_state () : parse_state = 
                 {
@@ -57,7 +74,11 @@ struct
  
         let upd_dataset_stats (s:parse_state) (f:dataset_stats->dataset_stats) =
                s.dataset_info.stats <- (f s.dataset_info.stats)
-
+        
+        let upd_dataset_coord_info (s:parse_state) (f:dataset_coord_info ->
+                dataset_coord_info) = 
+                s.dataset_info.coord_info <- (f s.dataset_info.coord_info)
+        
         let upd_lexical_levels (s:parse_state) (f:lexical_levels->lexical_levels) =
                s.dataset_info.lex <- (f s.dataset_info.lex)
  
@@ -79,7 +100,17 @@ struct
                 | 5 -> IUHarbor
                 | 6 -> IUBerthing
                 | _ -> error "int_to_intended_usage" "no intended usage" 
- 
+        
+        (*
+
+type application_profile = APElecNavCharts | APElecNavRevision | APIHOObjectCat
+         *)
+        let int_to_application_profile (i:int) = match i with
+        | 1 -> APElecNavChart
+        | 2 -> APElecNavRevision 
+        | 3 -> APIhoObjCatalog
+        | _ -> error "int_to_application_profile" "unknown id"
+        
         let int_to_data_struct_type (i:int) = match i with 
         | 1 -> DSCartographicSpaghetti (*cartographic spaghetti*)
         | 2 -> DSChainNode (*chain node*)

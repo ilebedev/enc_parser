@@ -21,8 +21,12 @@ struct
                 let line_str = string_of_int line in 
                 let col_str = string_of_int col in 
                 let enc_ex = Printexc.to_string ex in 
-                raise (ParseError (line_str^":"^col_str
-                ^" : Parse Error at <"^tok^">\n"^enc_ex^"\n"))
+                let msg = (line_str^":"^col_str^" : Parse Error at <"
+                ^tok^">\n"^enc_ex^"\n") in 
+                let _ = print_string msg in 
+                let _ = flush_all () in 
+                raise ex 
+
         let parse_except lexbuf fn = 
                 try
                         fn lexbuf

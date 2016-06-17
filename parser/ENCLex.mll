@@ -126,6 +126,17 @@ rule token = parse
 | "LNAM"                                                {LNAM}
 | "RIND"                                                {RIND}
 
+| "Feature record to spatial record pointer control field" {DSFEATSPATCTRL}
+| "FSPC"                        {FSPC}
+| "FSUI"                        {FSUI}
+| "FSIX"                        {FSIX}
+| "NSPT"                        {NSPT}
+
+| "Feature record to feature object pointer control field" {DSFEATOBJPTRCTRL}
+| "FFPC"                        {FFPC}
+| "FFUI"                        {FFUI}
+| "FFIX"                        {FFIX}
+| "NFPT"                        {NFPT}
 | "bytes"                       {BYTES}
 | "="                           {EQ}
 | ":"                           {COLON}
