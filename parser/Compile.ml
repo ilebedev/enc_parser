@@ -20,7 +20,9 @@ struct
         let raise_parse_exception ex line col tok =
                 let line_str = string_of_int line in 
                 let col_str = string_of_int col in 
-                raise (ParseError (line_str^":"^col_str^" : Parse Error at <"^tok^">"))
+                let enc_ex = Printexc.to_string ex in 
+                raise (ParseError (line_str^":"^col_str
+                ^" : Parse Error at <"^tok^">\n"^enc_ex^"\n"))
         let parse_except lexbuf fn = 
                 try
                         fn lexbuf

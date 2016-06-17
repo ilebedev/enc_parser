@@ -407,8 +407,14 @@ coord2d_stmts:
 | coord2d_stmts coord2d_stmt {()}
 
 vectattr_stmt:
-| ATTL EQ Int eol {()}
-| ATVL EQ String eol {()}
+| ATTL EQ Int eol {
+        let code = $3 in 
+        ()
+}
+| ATVL EQ String eol {
+        let desc = $3 in 
+        ()
+}
 
 vectattr_stmts:
 | vectattr_stmt {()}
@@ -419,7 +425,14 @@ vectptr_stmt:
   ORNT EQ Int eol 
   USAG EQ Int eol
   TOPI EQ Int eol
-  MASK EQ Int eol {()}
+  MASK EQ Int eol {
+        let foreign_ptr = ENCParseLib.name_to_foreign_ptr $3 in 
+        let orientation  = ENCParseLib.int_to_orientation $7 in
+        let usage_indicator  = ENCParseLib.int_to_usage_indicator $11 in  
+        let topology_indicator  = ENCParseLib.int_to_topology_indicator $15 in
+        let mask = $18 in 
+       () 
+}
 
 vectptr_stmts:
 | vectptr_stmt {()}
@@ -456,8 +469,14 @@ featattr_stmts:
 | featattr_stmts featattr_stmt {()}
 
 featspat_stmt:
-| NAME EQ Hex eol                            {()}
-| ORNT EQ Int  eol                            {()}
+| NAME EQ Hex eol  {
+        let foreign_ptr = ENCParseLib.name_to_foreign_ptr $3 in 
+        ()
+}
+| ORNT EQ Int  eol {
+        let orientation = $3 in
+        () 
+}
 | USAG EQ Int  eol                            {()}
 | MASK EQ Int  eol                            {()}
 
@@ -478,7 +497,6 @@ stmt:
 |        RECORD Int OPARAN Int BYTES CPARAN eol              {
                 let index : string  =string_of_int $2 in 
                 let nbytes : string = string_of_int $4 in 
-                let _ = msg ("reading record #"^index^" ("^nbytes^" bytes)") in 
                 ()
         }
 |        FIELD Int COLON RECORDID eol                        {
@@ -498,17 +516,36 @@ stmt:
                 let elem = $6 in 
                 ()
         }
-|        FIELD VRID COLON DSVECTID eol vcid_stmts             {()}
-|        FIELD SG3D COLON DS3DCOORDS eol coord3d_stmts       {()}
-|        FIELD SG2D COLON DS2DCOORD eol coord2d_stmts       {()}
-|        FIELD ATTV COLON DSVECTATTR eol vectattr_stmts     {()}
-|        FIELD VRPT COLON DSVECTPTR eol vectptr_stmts      {()}
-|        FIELD FRID COLON DSFEATID eol featid_stmts        {()}
-|        FIELD FOID COLON DSFEATOBJID eol featobjid_stmts        {()}
-|        FIELD ATTF COLON DSFEATATTR eol featattr_stmts        {()}
-|        FIELD FSPT COLON DSFEATSPAT eol featspat_stmts        {()}
-|        FIELD FFPT COLON DSFEATOBJPTR eol featobjptr_stmts        {()}
-;
+|        FIELD VRID COLON DSVECTID eol vcid_stmts  {
+
+}
+|        FIELD SG3D COLON DS3DCOORDS eol coord3d_stmts {
+  
+}
+|        FIELD SG2D COLON DS2DCOORD eol coord2d_stmts   {
+    
+} 
+|        FIELD ATTV COLON DSVECTATTR eol vectattr_stmts  {
+     
+}
+|        FIELD VRPT COLON DSVECTPTR eol vectptr_stmts  {
+    
+}   
+|        FIELD FRID COLON DSFEATID eol featid_stmts   {
+   
+}
+|        FIELD FOID COLON DSFEATOBJID eol featobjid_stmts  {
+  
+} 
+|        FIELD ATTF COLON DSFEATATTR eol featattr_stmts   {
+   
+} 
+|        FIELD FSPT COLON DSFEATSPAT eol featspat_stmts  {
+  
+}
+|        FIELD FFPT COLON DSFEATOBJPTR eol featobjptr_stmts  {
+  
+};
 
 stmts:
 |        stmts stmt {()}

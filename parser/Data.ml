@@ -9,12 +9,35 @@ type month = September | October | November | December | January
         | February | March | April | May | June | July | August 
 
 type data_struct_type = DSCartographicSpaghetti | 
-        DSChainNode | DSPlanarGRaph | DSFullTopology | DSNotRelevent
+        DSChainNode | DSPlanarGraph | DSFullTopology | DSNotRelevent
 
 type lexical_level = LLASCII | LLLatin | LLUnicode
 
 type coordinate_units = CULatLong | CUEastNorth | CUUnitsOnChartMap 
 
+type vector_type = 
+       VIsolatedNode | VConnectedNode | VEdge | VFace
+
+type record_type = 
+       |RGeoReference | RGenInfo | RDSHistory | RDSAccuracy
+       |RCatalogDir | RCatalogCrossReference 
+       |RDataDictDefn | RDataDictDomain | RDataDictSchema
+       |RVector of vector_type  
+
+type topology_indicator =
+        | TIBeginNode | TIEndNode | TILeftFace | TIRightFace
+        | TIContainingFace 
+
+type usage_indicator = 
+        | UIExterior | UIInterior | UIExteriorTrunc | UIIrrelevent
+
+type orientation =
+        | ORForward | ORReverse | ORIrrelevent
+
+type mask = 
+        | MKShow | MKMask | MKIrrelevent
+
+type foreign_ptr = record_type*int 
 
 type date = month*int*int 
 

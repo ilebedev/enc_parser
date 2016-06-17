@@ -83,7 +83,7 @@ struct
         let int_to_data_struct_type (i:int) = match i with 
         | 1 -> DSCartographicSpaghetti (*cartographic spaghetti*)
         | 2 -> DSChainNode (*chain node*)
-        | 3 -> DSPlanarGRaph (*planar graph*)
+        | 3 -> DSPlanarGraph (*planar graph*)
         | 4 -> DSFullTopology (*full topologu*)
         | 255 -> DSNotRelevent (*topology not relevent*)
         
@@ -98,6 +98,59 @@ struct
         | 2 -> CUEastNorth 
         | 3 -> CUUnitsOnChartMap
         | _ -> error "int_to_coordinate_unit" "unkonwn coordinate unit"
+        
+        let int_to_vect_type (i:int) = match i with 
+        | 110 -> VIsolatedNode 
+        | 120 -> VConnectedNode 
+        | 130 -> VEdge 
+        | 140 -> VFace
+       
+        let int_to_mask_type (i:int) = match i with 
+        | 1 -> MKMask
+        | 2 -> MKShow
+        | 255 -> MKIrrelevent
+        | _ -> error "int_to_mask_type" "unknown value"
+        
+        let int_to_usage_indicator (i:int) = match i with 
+        | 1 -> UIExterior
+        | 2 -> UIInterior
+        | 3 -> UIExteriorTrunc 
+        | 255 -> UIIrrelevent
+        | _ -> error "int_to_usage_indicator" ("unknown value: "^(string_of_int
+        i))
+
+        let int_to_orientation (i:int) = match i with
+        | 1 -> ORForward
+        | 2 -> ORReverse
+        | 255 -> ORIrrelevent
+        | _ -> error "int_to_orientation" "unknown value"
+        
+        let int_to_topology_indicator (i:int) = match i with 
+        | 1 -> TIBeginNode 
+        | 2 -> TIEndNode
+        | 3 -> TILeftFace
+        | 4 -> TIRightFace
+        | 5 -> TIContainingFace
+        | _ -> error "int_to_topology_indicator" "unknown value"
+
+        let int_to_record_type (i:int) = match i with 
+        | 10 -> RGenInfo
+        | 20 -> RGeoReference
+        | 30 -> RDSHistory 
+        | 40 -> RDSAccuracy
+        | 50 -> RCatalogDir 
+        | 60 -> RCatalogCrossReference
+        | 70 -> RDataDictDefn
+        | 80 -> RDataDictDomain
+        | 90 -> RDataDictSchema
+        | _ -> RVector (int_to_vect_type i)
+
+        let name_to_foreign_ptr (x:string) : foreign_ptr = 
+                let rcname = int_to_record_type (int_of_string
+                ("0x"^(String.sub x 0 2)) ) in  
+                let rcid = int_of_string ("0x"^(String.sub x 2 ((String.length x)
+                -2))) in 
+               (rcname,rcid)
 
         let month_of_int (i:int) = match i with 
                 | 1 -> January

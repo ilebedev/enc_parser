@@ -132,8 +132,11 @@ rule token = parse
 | "/"                           {FSLASH}
 | "("                           {OPARAN}
 | ")"                           {CPARAN}
-| string_reg as s              {String(String.sub s 1 ((String.length s) - 2) )}
-| addr as i                  {Hex(i)}
+| string_reg as s               {String(String.sub s 1 ((String.length s) - 2) )}
+| addr as i                     {
+        let splice = String.sub i 2 ((String.length i) - 2) in 
+        Hex(splice)
+}
 | decimal as d                  {Decimal(float_of_string d)}
 | integer as i                  {Int(int_of_string i)}
 | eof                           {EOF}
