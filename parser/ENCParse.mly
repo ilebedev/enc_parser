@@ -491,7 +491,10 @@ featspat_stmts:
 | featspat_stmts featspat_stmt                {()}
 
 featobjptr_stmt:
-| LNAM EQ Hex eol                                   {()}
+| LNAM EQ Hex eol  {
+        let _ = ENCParseLib.long_name_to_feature_obj_id $3 in 
+        ()
+} 
 | RIND EQ Int eol                                    {()}
 | COMT EQ String eol                                 {()}
 

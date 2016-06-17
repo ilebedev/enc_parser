@@ -151,6 +151,10 @@ struct
                 let rcid = int_of_string ("0x"^(String.sub x 2 ((String.length x)
                 -2))) in 
                (rcname,rcid)
+        
+        let long_name_to_feature_obj_id (x:string) =
+                let _ = msg x in
+                ()
 
         let month_of_int (i:int) = match i with 
                 | 1 -> January
