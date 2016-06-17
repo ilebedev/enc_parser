@@ -144,17 +144,24 @@ struct
         | 80 -> RDataDictDomain
         | 90 -> RDataDictSchema
         | _ -> RVector (int_to_vect_type i)
+        
+        let to_hex x = 
+                "0x"^x 
 
         let name_to_foreign_ptr (x:string) : foreign_ptr = 
                 let rcname = int_to_record_type (int_of_string
-                ("0x"^(String.sub x 0 2)) ) in  
-                let rcid = int_of_string ("0x"^(String.sub x 2 ((String.length x)
+                (to_hex (String.sub x 0 2)) ) in  
+                let rcid = int_of_string (to_hex (String.sub x 2 ((String.length x)
                 -2))) in 
                (rcname,rcid)
         
         let long_name_to_feature_obj_id (x:string) =
-                let _ = msg x in
-                ()
+                (*AGEN=3 hex, FIDN=4 bytes (hex 8), FIDS=2 bytes (hex 4)*)
+                (*let _ = msg x in*)
+                let agen = int_of_string(to_hex (String.sub x 0 3)) in 
+                let fidn = int_of_string (to_hex (String.sub x 3 8)) in 
+                let fids = int_of_string (to_hex (String.sub x 11 4)) in 
+                (agen,fidn,fids)
 
         let month_of_int (i:int) = match i with 
                 | 1 -> January
