@@ -482,7 +482,7 @@ featspat_stmt:
         ()
 }
 | MASK EQ Int  eol  {
-        let mask = ENCParseLib.int_to_mask $3 in 
+        let mask = ENCParseLib.int_to_mask_type $3 in 
         ()
 }       
 
