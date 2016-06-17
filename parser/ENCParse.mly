@@ -474,11 +474,17 @@ featspat_stmt:
         ()
 }
 | ORNT EQ Int  eol {
-        let orientation = $3 in
+        let orientation = ENCParseLib.int_to_orientation $3 in
         () 
 }
-| USAG EQ Int  eol                            {()}
-| MASK EQ Int  eol                            {()}
+| USAG EQ Int  eol  {
+        let usage = ENCParseLib.int_to_usage_indicator $3 in 
+        ()
+}
+| MASK EQ Int  eol  {
+        let mask = ENCParseLib.int_to_mask $3 in 
+        ()
+}       
 
 featspat_stmts:
 | featspat_stmt                               {()}
