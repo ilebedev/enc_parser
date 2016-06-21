@@ -81,7 +81,10 @@ struct
         
         let upd_lexical_levels (s:parse_state) (f:lexical_levels->lexical_levels) =
                s.dataset_info.lex <- (f s.dataset_info.lex)
- 
+        
+        let make_dataset (s:parse_state) = 
+                {info = s.dataset_info} 
+        
         let set_record (s:parse_state) (i:int) = 
                 let _ = s.record_id <- Some i in
                 ()
@@ -117,6 +120,11 @@ type application_profile = APElecNavCharts | APElecNavRevision | APIHOObjectCat
         | 3 -> DSPlanarGraph (*planar graph*)
         | 4 -> DSFullTopology (*full topologu*)
         | 255 -> DSNotRelevent (*topology not relevent*)
+        
+        let int_to_update_inst (i:int) = match i with 
+        | 1 -> USInsert
+        | 2 -> USDelete
+        | 3 -> USModify          
         
         let int_to_lexical_level (i:int) = match i  with 
         | 0 -> LLASCII 

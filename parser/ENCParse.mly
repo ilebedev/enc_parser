@@ -73,7 +73,7 @@ NOCN, NOED, NOFA
 
 %start toplevel
 
-%type <unit> toplevel
+%type <Data.dataset option> toplevel
 %%
 
 eol:
@@ -414,11 +414,11 @@ dspar_stmts:
 
 vcid_stmt:
 | RCNM EQ Int eol  {
-        let _ = $3 in 
+        let vtyp = ENCParseLib.int_to_vect_type $3 in 
         ()
 }
 | RCID EQ Int eol  {
-        let _ = $3 in 
+        let vid = $3 in 
         ()
 }
 | RVER EQ Int eol  {
@@ -426,7 +426,7 @@ vcid_stmt:
         ()
 } 
 | RUIN EQ Int eol  {
-        let _ = $3 in 
+        let vupdinst = ENCParseLib.int_to_update_inst $3 in 
         ()
 }
 
@@ -653,6 +653,7 @@ stmts:
 ;
 
 toplevel:
-|        stmts EOF {()}
-|        EOF {()}
+|        stmts EOF {Some (ENCParseLib.make_dataset _state)}
+
+|        EOF {None}
 ;

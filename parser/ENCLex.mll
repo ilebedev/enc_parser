@@ -137,6 +137,7 @@ rule token = parse
 | "FFUI"                        {FFUI}
 | "FFIX"                        {FFIX}
 | "NFPT"                        {NFPT}
+
 | "bytes"                       {BYTES}
 | "="                           {EQ}
 | ":"                           {COLON}

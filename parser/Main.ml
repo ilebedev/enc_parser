@@ -3,8 +3,8 @@ open Sys
 open Core
 open Data
 open Compile
-
-
+open JSONExporter
+open Printf
 
 exception MainException of string*string;;
 
@@ -18,7 +18,18 @@ let gen_output_from_bsb (bsb:string) (out_file:string) (out_type:output_type) : 
 
 let gen_output_from_enc (enc:string) (out_file:string) (out_type:output_type) : unit =
         let _ = print_string "== Parsing ENC ==\n" in
-        let data = Parser.parse_enc enc in 
+        let data : dataset = Parser.parse_enc enc in 
+        let str = match out_type with 
+        | OutTypJson -> 
+                print_string "== Generating JSON ==\n";
+                let json = ENCJSONExporter.export_dataset data in 
+                ENCJSONExporter.json_to_string json
+        | _ -> raise_error "gen_output_from_enc" "unsupported output"
+        in 
+        print_string ("== Outputting to File <"^out_file^"> ==\n");
+        let oc = open_out out_file in  
+        fprintf oc "%s\n" str;
+        close_out oc;
         ()
 
 

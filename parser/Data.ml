@@ -32,6 +32,9 @@ type topology_indicator =
 type usage_indicator = 
         | UIExterior | UIInterior | UIExteriorTrunc | UIIrrelevent
 
+type update_instruction = 
+        | USInsert | USDelete | USModify
+
 type orientation =
         | ORForward | ORReverse | ORIrrelevent
 
@@ -90,13 +93,23 @@ type dataset_info = {
 }
 
 
+type dataset  = {
+        info : dataset_info;
+}
+
 type output_type = 
         | OutTypJson
         | OutTypRaw
+
+type vector_ident = int
+
+type vector_2d = int
+type vector_3d = int
 
 type parse_state = {
         mutable record_id: int option;
         mutable dataset_info : dataset_info;
 }
+
 
 let stmt f r = let _ = f in r

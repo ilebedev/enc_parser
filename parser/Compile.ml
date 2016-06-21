@@ -5,13 +5,15 @@ open KAPLex
 open KAPParse
 open ENCLex
 open ENCParse
+open Data
 
+exception ParserException of string;;
 
 module Parser : 
 sig
         val parse_kap : string -> unit
         val parse_bsb : string -> unit
-        val parse_enc : string -> unit
+        val parse_enc : string -> dataset 
 end = 
 struct
 
@@ -56,12 +58,14 @@ struct
 
         let _parse_enc (filename:string) =
                 let do_parse chan = ENCParse.toplevel ENCLex.token chan in 
-                parse_file filename do_parse
+                match parse_file filename do_parse with
+                | Some(data) -> data
+                | None -> raise (ParserException "could not parse ENC file")
         
         let parse_enc(filename:string) = 
                 let tmpfile = "__tmp__.txt" in 
                 let _ = Sys.command ("c-src/s57parse "^filename^" > "^tmpfile) in
-                let _ = _parse_enc tmpfile in 
-                ()
+                let result = _parse_enc tmpfile in 
+                result
 
 end
