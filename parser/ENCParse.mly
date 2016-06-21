@@ -19,7 +19,8 @@ ISDT,STED,PRSP,PSDN,PRED,PROF,AGEN,COMT
 %{
         open Data
         open ENCParseLib
-        
+        open DataLib
+
         exception ENCParseError of string*string
         
         let _state = ENCParseLib.init_state();;
@@ -94,7 +95,7 @@ dsi_stmt:
 }
 (*exchange purpose*)
 |  EXPP EQ Int eol  {
-        let expp = ENCParseLib.int_to_exchange_purpose $3 in
+        let expp = DataLib.int_to_exchange_purpose $3 in
         let _ = ENCParseLib.upd_dataset _state 
                 (fun ds -> stmt (ds.exchange <- expp) ds)
         in
@@ -102,7 +103,7 @@ dsi_stmt:
 }
 (*intended usage*)
 |  INTU EQ Int eol {
-        let intu = ENCParseLib.int_to_intended_usage $3 in
+        let intu = DataLib.int_to_intended_usage $3 in
         let _ = ENCParseLib.upd_dataset _state 
                 (fun ds -> stmt (ds.usage <- intu) ds)
         in
@@ -139,7 +140,7 @@ dsi_stmt:
                         None
                 else
                         let uadt = int_of_string $3 in 
-                        Some (ENCParseLib.int_to_date uadt) 
+                        Some (DataLib.int_to_date uadt) 
         in
         let _ = ENCParseLib.upd_dataset _state 
                 (fun ds -> stmt (ds.update_app_date <- upd_app_date) ds )
@@ -153,7 +154,7 @@ dsi_stmt:
                         None
                 else
                         let uadt = int_of_string $3 in 
-                        Some (ENCParseLib.int_to_date uadt) 
+                        Some (DataLib.int_to_date uadt) 
         in
         let _ = ENCParseLib.upd_dataset _state 
                 (fun ds -> stmt (ds.issue_date <- upd_issue_date) ds )
@@ -182,7 +183,7 @@ dsi_stmt:
 }
 (*application profile information.*)
 |  PROF EQ Int eol   {
-        let code = ENCParseLib.int_to_application_profile $3 in
+        let code = DataLib.int_to_application_profile $3 in
         let _ = ENCParseLib.upd_dataset _state
                 (fun ds -> stmt (ds.app_profile <- code) ds)
         in 
@@ -211,13 +212,13 @@ dsi_stmts:
 
 dsst_stmt:
 | DSTR EQ Int eol  {
-        let data_structure = ENCParseLib.int_to_data_struct_type $3 in 
+        let data_structure = DataLib.int_to_data_struct_type $3 in 
         ()
 }        
 
 (*lexical level used for AATF fields*)
 | AALL EQ Int eol {
-        let lexical_level = ENCParseLib.int_to_lexical_level $3 in 
+        let lexical_level = DataLib.int_to_lexical_level $3 in 
         let _ = assert (lexical_level != LLUnicode) in 
         let _ = ENCParseLib.upd_lexical_levels _state
                 (fun st -> stmt (st.attf_lex <- lexical_level) st)
@@ -226,7 +227,7 @@ dsst_stmt:
 }
 (*lexical level used for NATF fields*)
 | NALL EQ Int eol {
-        let lexical_level = ENCParseLib.int_to_lexical_level $3 in 
+        let lexical_level = DataLib.int_to_lexical_level $3 in 
         let _ = ENCParseLib.upd_lexical_levels _state
                 (fun st -> stmt (st.natf_lex <- lexical_level) st)
         in
@@ -375,7 +376,7 @@ dspar_stmt:
 }      
 (*coordinate units *)
 |  COUN EQ Int eol {
-        let coord_units = ENCParseLib.int_to_coordinate_unit $3 in 
+        let coord_units = DataLib.int_to_coordinate_unit $3 in 
         let _ = ENCParseLib.upd_dataset_coord_info _state
                 (fun met -> stmt (met.coord_units <- coord_units) met)
         in
@@ -414,7 +415,7 @@ dspar_stmts:
 
 vcid_stmt:
 | RCNM EQ Int eol  {
-        let vtyp = ENCParseLib.int_to_vect_type $3 in 
+        let vtyp = DataLib.int_to_vect_type $3 in 
         ()
 }
 | RCID EQ Int eol  {
@@ -426,7 +427,7 @@ vcid_stmt:
         ()
 } 
 | RUIN EQ Int eol  {
-        let vupdinst = ENCParseLib.int_to_update_inst $3 in 
+        let vupdinst = DataLib.int_to_update_inst $3 in 
         ()
 }
 
@@ -482,9 +483,9 @@ vectptr_stmt:
   TOPI EQ Int eol
   MASK EQ Int eol {
         let foreign_ptr = ENCParseLib.name_to_foreign_ptr $3 in 
-        let orientation  = ENCParseLib.int_to_orientation $7 in
-        let usage_indicator  = ENCParseLib.int_to_usage_indicator $11 in  
-        let topology_indicator  = ENCParseLib.int_to_topology_indicator $15 in
+        let orientation  = DataLib.int_to_orientation $7 in
+        let usage_indicator  = DataLib.int_to_usage_indicator $11 in  
+        let topology_indicator  = DataLib.int_to_topology_indicator $15 in
         let mask = $18 in 
        () 
 }
@@ -529,15 +530,15 @@ featspat_stmt:
         ()
 }
 | ORNT EQ Int  eol {
-        let orientation = ENCParseLib.int_to_orientation $3 in
+        let orientation = DataLib.int_to_orientation $3 in
         () 
 }
 | USAG EQ Int  eol  {
-        let usage = ENCParseLib.int_to_usage_indicator $3 in 
+        let usage = DataLib.int_to_usage_indicator $3 in 
         ()
 }
 | MASK EQ Int  eol  {
-        let mask = ENCParseLib.int_to_mask_type $3 in 
+        let mask = DataLib.int_to_mask_type $3 in 
         ()
 }       
 
