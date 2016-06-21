@@ -95,12 +95,17 @@ struct
 
 type application_profile = APElecNavCharts | APElecNavRevision | APIHOObjectCat
          *)
-        let int_to_application_profile (i:int) = match i with
+        let int_to_application_profile (i:int) : application_profile = match i with
         | 1 -> APElecNavChart
         | 2 -> APElecNavRevision 
         | 3 -> APIhoObjCatalog
         | _ -> error "int_to_application_profile" "unknown id"
-        
+       
+        let application_profile_to_string (i:application_profile):string = match i with 
+        | APElecNavChart -> "nav_chart"
+        | APElecNavRevision -> "nav_chart_revision"
+        | APIhoObjCatalog -> "iho_obj_catalog"
+
         let int_to_data_struct_type (i:int) = match i with 
         | 1 -> DSCartographicSpaghetti (*cartographic spaghetti*)
         | 2 -> DSChainNode (*chain node*)
@@ -185,6 +190,20 @@ type application_profile = APElecNavCharts | APElecNavRevision | APIHOObjectCat
                 | 10 -> October
                 | 11 -> November
                 | 12 -> December 
+        
+        let month_to_int (i:month) = match i with 
+        | January -> 1
+        | February -> 2
+        | March -> 3
+        | April -> 4
+        | May -> 5
+        | June -> 6
+        | July ->7 
+        | August -> 8
+        | September -> 9
+        | October -> 10
+        | November -> 11
+        | December -> 12 
 
         let int_to_date (i:int) = 
                 let istr = string_of_int i in 
