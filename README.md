@@ -5,6 +5,23 @@ The US [NOAA][noaa] publishes free and excellent marine cartography, which is of
 
 ENC charts published by [NOAA][noaa] are available [here][enc_charts]. An [example enc chart][enc_example] (of the Boston inner harbor) encodes a superset of data visualized in this printable [official marine chart][printable_chart_example].
 
+###Setting up your enviornment
+
+This project requires `ocaml` and its package manager, `opam`, as well as a few modules. To set up both on a Debian/Ubuntu linux, the following is sufficient (note that `<parser>` refers to the `./parser/` directory):
+
+    cd <parser>
+    sudo add-apt-repository ppa:avsm/ppa
+    sudo apt-get update
+    sudo apt-get install ocaml opam
+    opam init
+    eval `opam config env`
+    opam install ocamlfind core menhir
+
+You also must build a native tool (in `./c-src`) to parse the ISO/IEC 8211 format into an intermediate representation. To do so, simply:
+
+    cd <parser>/c-src
+    make
+
 ###Related work
 
 A handful of parsers exist.
@@ -16,6 +33,10 @@ OpenCPN is an excellent, although opinionated and bulky open source chart plotte
 
 #### Other ENC parsers on Github
 [This one](https://github.com/tburke/ihos57) does not look like it's going to happen, but [this one](https://github.com/KaiAbuSir/EncLib) may one day do some good.
+
+### Acknowledgements
+
+This project uses the [iso8211lib tool](http://home.gdal.org/projects/iso8211/) (copied [here](https://github.com/vladimir-lu/iso8211lib))
 
 
 [enc_charts]: http://www.charts.noaa.gov/InteractiveCatalog/nrnc.shtml#mapTabs-2
