@@ -38,6 +38,7 @@ type update_instruction =
 type orientation =
         | ORForward | ORReverse | ORIrrelevent
 
+
 type mask = 
         | MKShow | MKMask | MKIrrelevent
 
@@ -47,15 +48,35 @@ type date = month*int*int
 
 type iho_object_id = int
 
+type depth_unit = 
+        | DUMeters | DUFathomsAndFeet | DUFeet | DUFathomsAndFractions
+ 
+type height_unit = 
+        | HUMeters | HUFeet
 
+(*resolution 0.1 or 0.1 mm*)
+type pos_accuracy_unit = 
+        | PUMeters | PUDegreesOfArc | PUMillimeters | PUFeet
+                |PUCables
+
+              
+
+type horiz_ref = HRWGS84  
+
+type vert_ref =  VRMLWaterSprings | VRMLLWaterSprings | VRMSeaLevel
+        | VRLLWater | VRMLWater | VRLLWaterSprings | VRAMLWaterSprings
+        | VRIndianSpringLowWater | VRLWaterSprings | VRALAstroTide 
+        | VRNLLWater | VRMLLWater | VRLWater | VRAMLWater | VRAMLLWater
+        | VRMHWater | VRMHWaterSprings | VRHWater
+        
 type dataset_coord_info = {
-        mutable  horiz : int;
-        mutable  vert : int;
-        mutable  sounding : int;
+        mutable  horiz : horiz_ref;
+        mutable  vert : vert_ref;
+        mutable  sounding : vert_ref;
         mutable  compilation_scale: int;
-        mutable  depth_units : int;
-        mutable  height_units : int;
-        mutable  positional_accuracy : int;
+        mutable  depth_units : depth_unit;
+        mutable  height_units : height_unit;
+        mutable  positional_accuracy : pos_accuracy_unit;
         mutable  coord_units : coordinate_units;
         mutable  coord_mult_factor : int;
         mutable  sound_mult_factor : int;
@@ -100,6 +121,12 @@ type dataset  = {
 type output_type = 
         | OutTypJson
         | OutTypRaw
+
+type vector_record_info = {
+        mutable typ : vector_type;
+        mutable id : int;
+        mutable op : update_instruction;  
+}
 
 type vector_ident = int
 

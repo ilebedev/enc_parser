@@ -317,7 +317,8 @@ dspar_stmt:
 }
 (*horizontal geodetic datum*)
 |  HDAT EQ Int eol {
-        let horiz_val = $3 in
+        let horiz_val = DataLib.int_to_horiz_ref $3 in
+        assert (horiz_val = HRWGS84);
         let _ = ENCParseLib.upd_dataset_coord_info _state
                 (fun met -> stmt (met.horiz <- horiz_val) met)
         in
@@ -325,7 +326,7 @@ dspar_stmt:
 }
 (*vertical geodetic datum*)
 |  VDAT EQ Int eol { 
-        let vert_val = $3 in
+        let vert_val = DataLib.int_to_vert_ref $3 in
         let _ = ENCParseLib.upd_dataset_coord_info _state
                 (fun met -> stmt (met.vert <- vert_val) met)
         in
@@ -334,7 +335,7 @@ dspar_stmt:
 
 (*sounding datum*)
 |  SDAT EQ Int eol  { 
-        let snd_val = $3 in
+        let snd_val = DataLib.int_to_vert_ref $3 in
         let _ = ENCParseLib.upd_dataset_coord_info _state
                 (fun met -> stmt (met.sounding <- snd_val) met)
         in
@@ -352,7 +353,8 @@ dspar_stmt:
 
 (*units of depth measurement*)
 |  DUNI EQ Int eol {
-        let depth_units = $3 in
+        let depth_units = DataLib.int_to_depth_units $3 in
+        assert (depth_units = DUMeters);
         let _ = ENCParseLib.upd_dataset_coord_info _state 
                 (fun met -> stmt (met.depth_units <- depth_units) met)
         in 
@@ -360,7 +362,8 @@ dspar_stmt:
 }
 (*units of height measurement*)
 |  HUNI EQ Int eol {
-        let height_unit = $3 in 
+        let height_unit = DataLib.int_to_height_units $3 in 
+        assert (height_unit = HUMeters);
         let _ = ENCParseLib.upd_dataset_coord_info _state 
                 (fun met -> stmt (met.height_units <- height_unit) met)
         in 
@@ -368,7 +371,8 @@ dspar_stmt:
 }
 (*units of positional accuracy *)
 |  PUNI EQ Int eol {
-        let pos = $3 in 
+        let pos = DataLib.int_to_pos_accuracy_units $3 in 
+        assert (pos = PUMeters);
         let _ = ENCParseLib.upd_dataset_coord_info _state
                 (fun met -> stmt (met.positional_accuracy <- pos) met)
         in
@@ -377,6 +381,7 @@ dspar_stmt:
 (*coordinate units *)
 |  COUN EQ Int eol {
         let coord_units = DataLib.int_to_coordinate_unit $3 in 
+        assert (coord_units = CULatLong); 
         let _ = ENCParseLib.upd_dataset_coord_info _state
                 (fun met -> stmt (met.coord_units <- coord_units) met)
         in
@@ -415,8 +420,11 @@ dspar_stmts:
 
 vcid_stmt:
 | RCNM EQ Int eol  {
-        let vtyp = DataLib.int_to_vect_type $3 in 
-        ()
+        let vtyp : vector_type = DataLib.int_to_vect_type $3 in 
+        let _ = ENCParseLib.upd_vector_record_info _state 
+                (fun q -> stmt (q.typ <- vtyp) q)
+        in
+           ()
 }
 | RCID EQ Int eol  {
         let vid = $3 in 
@@ -427,7 +435,10 @@ vcid_stmt:
         ()
 } 
 | RUIN EQ Int eol  {
-        let vupdinst = DataLib.int_to_update_inst $3 in 
+        let vupdinst : update_instruction = DataLib.int_to_update_inst $3 in 
+        let _ = ENCParseLib.upd_vector_record_info _state
+                (fun q -> stmt (q.op <- vupdinst) q)
+        in
         ()
 }
 
@@ -435,14 +446,17 @@ vcid_stmts:
 | vcid_stmt {()}
 | vcid_stmts vcid_stmt {()}
 
+(*y coordinate, x coordinate and sounding value*)
 coord3d_stmt:
 | YC00 EQ Int eol 
   XC00 EQ Int eol                                       
   VE3D EQ Int eol  {
         let y:int = $3 in 
         let x:int = $7 in 
-        let z:int = $11 in 
-        ()
+        let z:int = $11 in
+        (*compute coordinate*) 
+        let x,y,z = ENCParseLib.proc_coords _state x y z in
+        (x,y,z)
 }
 
 coord3d_stmts:

@@ -27,6 +27,10 @@ struct
                 dataset_coord_info) = 
                 s.dataset_info.coord_info <- (f s.dataset_info.coord_info)
         
+        
+        let upd_vector_record_info (s:parse_state) (f:vector_record_info ->
+                vector_record_info) = ()
+
         let upd_lexical_levels (s:parse_state) (f:lexical_levels->lexical_levels) =
                s.dataset_info.lex <- (f s.dataset_info.lex)
         
@@ -39,6 +43,32 @@ struct
         
         let to_hex x = 
                 "0x"^x 
+        
+type dataset_coord_info = {
+        mutable  horiz : int;
+        mutable  vert : int;
+        mutable  sounding : int;
+        mutable  compilation_scale: int;
+        mutable  depth_units : depth_unit;
+        mutable  height_units : int;
+        mutable  positional_accuracy : int;
+        mutable  coord_units : coordinate_units;
+        mutable  coord_mult_factor : int;
+        mutable  sound_mult_factor : int;
+        mutable  comment: string;
+}
+
+        let proc_coords (s:parse_state) x y z = 
+                let cif = s.dataset_info.coord_info in
+                let res = cif.compilation_scale in 
+                let xf:float = (float_of_int x) /. (float_of_int cif.coord_mult_factor) in
+                let yf:float = (float_of_int y) /. (float_of_int cif.coord_mult_factor) in
+                let zf:float = (float_of_int z) /. (float_of_int cif.sound_mult_factor) in                
+                match cif.coord_units with
+                | CULatLong -> xf,yf,zf
+                | CUEastNorth -> xf,yf,zf
+                | CUUnitsOnChartMap -> xf,yf,zf
+
 
         let name_to_foreign_ptr (x:string) : foreign_ptr = 
                 let rcname = DataLib.int_to_record_type (int_of_string

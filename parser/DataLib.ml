@@ -30,13 +30,13 @@ struct
         }
         let make_dataset_coord_info () =
         {
-        horiz = 0;
-        vert = 0;
-        sounding = 0;
+        horiz = HRWGS84;
+        vert = VRMLWaterSprings;
+        sounding = VRMLWaterSprings;
         compilation_scale= 0;
-        depth_units = 0;
-        height_units = 0;
-        positional_accuracy = 0;
+        depth_units = DUMeters;
+        height_units = HUMeters;
+        positional_accuracy = PUMeters;
         coord_units = CULatLong;
         coord_mult_factor = 0;
         sound_mult_factor = 0;
@@ -91,10 +91,52 @@ struct
                 | IUApproach -> "approach"
                 | IUHarbor -> "harbor"
                 | IUBerthing -> "berthing"
+        
+        let int_to_depth_units (i:int) = match i with 
+        | 1 -> DUMeters
+        | 2 -> DUFathomsAndFeet
+        | 3 -> DUFeet 
+        | 4 -> DUFathomsAndFractions
+        
+        let int_to_height_units (i:int) = match i with
+        | 1 -> HUMeters
+        | 2 -> HUFeet
+
+        let int_to_pos_accuracy_units (i:int) = match i with 
+        | 1 -> PUMeters
+        | 2 -> PUDegreesOfArc
+        | 3 -> PUMillimeters
+        | 4 -> PUFeet
+        | 5 -> PUCables
+        
+        let int_to_horiz_ref (i:int) = match i with 
+        | 2 -> HRWGS84
+        | _ -> error "int_to_horiz_ref" ("unimplemented: "^(string_of_int i))
+
+        let int_to_vert_ref (i:int) = match i with
+        | 1 -> VRMLWaterSprings
+        | 2 -> VRMLLWaterSprings
+        | 3 -> VRMSeaLevel
+        | 4 -> VRLLWater
+        | 5 -> VRMLWater
+        | 6 -> VRLLWaterSprings
+        | 7 -> VRAMLWaterSprings
+        | 8-> VRIndianSpringLowWater
+        | 9 -> VRLWaterSprings
+        | 10 -> VRALAstroTide
+        | 11 -> VRNLLWater
+        | 12 -> VRMLLWater
+        | 13 -> VRLWater 
+        | 14 -> VRAMLWater
+        | 15 -> VRAMLLWater
+        | 16 -> VRMHWater
+        | 17 -> VRMHWaterSprings
+        | 18 -> VRHWater
+        | _ -> error "int_to_vert_ref" ("unimplemented: "^(string_of_int i))
         (*
 
 type application_profile = APElecNavCharts | APElecNavRevision | APIHOObjectCat
-         *)
+        *)
         let int_to_application_profile (i:int) : application_profile = match i with
         | 1 -> APElecNavChart
         | 2 -> APElecNavRevision 
@@ -178,18 +220,18 @@ type application_profile = APElecNavCharts | APElecNavRevision | APIHOObjectCat
         
 
         let month_of_int (i:int) = match i with 
-                | 1 -> January
-                | 2 -> February
-                | 3 -> March
-                | 4 -> April
-                | 5 -> May
-                | 6 -> June
-                | 7 -> July
-                | 8 -> August
-                | 9 -> September
-                | 10 -> October
-                | 11 -> November
-                | 12 -> December 
+        | 1 -> January
+        | 2 -> February
+        | 3 -> March
+        | 4 -> April
+        | 5 -> May
+        | 6 -> June
+        | 7 -> July
+        | 8 -> August
+        | 9 -> September
+        | 10 -> October
+        | 11 -> November
+        | 12 -> December 
         
         let month_to_int (i:month) = match i with 
         | January -> 1
