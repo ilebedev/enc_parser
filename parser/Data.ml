@@ -1,3 +1,4 @@
+open DataStructure
 
 type exchange_purpose = EXNew | EXUpdate
 
@@ -9,15 +10,16 @@ type application_profile = APElecNavChart | APElecNavRevision | APIhoObjCatalog
 type month = September | October | November | December | January
         | February | March | April | May | June | July | August 
 
-type data_struct_type = DSCartographicSpaghetti | 
-        DSChainNode | DSPlanarGraph | DSFullTopology | DSNotRelevent
+type data_struct_type = DSCartSpaghetti | 
+        DSChainNode | DSPlanarGraph | DSFullTopo | DSIrrelevent
+
 
 type lexical_level = LLASCII | LLLatin | LLUnicode
 
 type coordinate_units = CULatLong | CUEastNorth | CUUnitsOnChartMap 
 
 type vector_type = 
-       VIsolatedNode | VConnectedNode | VEdge | VFace
+       VIsolatedNode | VConnectedNode | VEdge | VFace | VUnknown
 
 type record_type = 
        |RGeoReference | RGenInfo | RDSHistory | RDSAccuracy
@@ -27,13 +29,16 @@ type record_type =
 
 type topology_indicator =
         | TIBeginNode | TIEndNode | TILeftFace | TIRightFace
-        | TIContainingFace 
+        | TIContainingFace | TIIrrelevent 
+
+type mask_type =
+        |MMask | MShow | MIrrelevent 
 
 type usage_indicator = 
         | UIExterior | UIInterior | UIExteriorTrunc | UIIrrelevent
 
 type update_instruction = 
-        | USInsert | USDelete | USModify
+        | USInsert | USDelete | USModify | USUnknown
 
 type orientation =
         | ORForward | ORReverse | ORIrrelevent
@@ -111,6 +116,7 @@ type dataset_info = {
         mutable stats : dataset_stats;
         mutable lex : lexical_levels; 
         mutable coord_info : dataset_coord_info;
+        mutable structure : data_struct_type;
 }
 
 
@@ -128,15 +134,38 @@ type vector_record_info = {
         mutable op : update_instruction;  
 }
 
+type geom_ptr = {
+        ptr : foreign_ptr;
+        topology : topology_indicator;
+        orientation : orientation;
+        mask : mask_type;
+        usage: usage_indicator;
+}
 type vector_ident = int
 
 type vector_2d = int
 type vector_3d = int
 
-type parse_state = {
-        mutable record_id: int option;
-        mutable dataset_info : dataset_info;
-}
+type coord = 
+        | Vect3D of (float*float*float) list
+        | Vect2D of (float*float) list 
 
+type geom_entry = 
+        | GIsolatedNode of coord
+        | GEdge of coord 
+        | GConnectedNode of coord
+        | GFace of unit
+
+type side = Left | Right 
+type ending = Start | End 
+
+type geom_rel = 
+        | GFIsolatedNode of int
+        | GFEdge of int
+        
+        | GEConnNode of ending*int
+        | GEFace of side*int
+        
+        
 
 let stmt f r = let _ = f in r

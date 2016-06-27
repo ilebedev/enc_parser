@@ -12,6 +12,12 @@ let error k msg =  raise (DataLibParseError(k,msg))
 
 module DataLib =
 struct
+        let make_vector_info () = {
+                typ = VUnknown;
+                id = -1;
+                op = USUnknown;
+        }
+
         let make_lexical_levels () = {
                         attf_lex = LLASCII;
                         natf_lex = LLASCII;
@@ -64,6 +70,7 @@ struct
                         stats=make_dataset_stats ();
                         lex=make_lexical_levels ();
                         coord_info=make_dataset_coord_info ();
+                        structure=DSIrrelevent;
                 }
  
         let int_to_exchange_purpose (i:int) = match i with
@@ -91,6 +98,11 @@ struct
                 | IUApproach -> "approach"
                 | IUHarbor -> "harbor"
                 | IUBerthing -> "berthing"
+        
+        let int_to_mask (i:int) : mask_type = match i with 
+        | 1 -> MMask
+        | 2 -> MShow
+        | 255 -> MIrrelevent
         
         let int_to_depth_units (i:int) = match i with 
         | 1 -> DUMeters
@@ -149,11 +161,11 @@ type application_profile = APElecNavCharts | APElecNavRevision | APIHOObjectCat
         | APIhoObjCatalog -> "iho_obj_catalog"
 
         let int_to_data_struct_type (i:int) = match i with 
-        | 1 -> DSCartographicSpaghetti (*cartographic spaghetti*)
+        | 1 -> DSCartSpaghetti (*cartographic spaghetti*)
         | 2 -> DSChainNode (*chain node*)
         | 3 -> DSPlanarGraph (*planar graph*)
-        | 4 -> DSFullTopology (*full topologu*)
-        | 255 -> DSNotRelevent (*topology not relevent*)
+        | 4 -> DSFullTopo (*full topologu*)
+        | 255 -> DSIrrelevent (*topology not relevent*)
         
         let int_to_update_inst (i:int) = match i with 
         | 1 -> USInsert
@@ -204,6 +216,7 @@ type application_profile = APElecNavCharts | APElecNavRevision | APIHOObjectCat
         | 3 -> TILeftFace
         | 4 -> TIRightFace
         | 5 -> TIContainingFace
+        | 255 -> TIIrrelevent
         | _ -> error "int_to_topology_indicator" "unknown value"
 
         let int_to_record_type (i:int) = match i with 

@@ -213,6 +213,9 @@ dsi_stmts:
 dsst_stmt:
 | DSTR EQ Int eol  {
         let data_structure = DataLib.int_to_data_struct_type $3 in 
+        let _ = ENCParseLib.upd_dataset _state
+                (fun st -> stmt (st.structure <- data_structure) st)
+        in
         ()
 }        
 
@@ -428,6 +431,9 @@ vcid_stmt:
 }
 | RCID EQ Int eol  {
         let vid = $3 in 
+        let _ = ENCParseLib.upd_vector_record_info _state
+                (fun q -> stmt (q.id <- vid) q)
+        in
         ()
 }
 | RVER EQ Int eol  {
@@ -460,21 +466,31 @@ coord3d_stmt:
 }
 
 coord3d_stmts:
-| coord3d_stmt {()}
-| coord3d_stmts coord3d_stmt {()}
+| coord3d_stmt {let coord = $1 in [coord]}
+| coord3d_stmt coord3d_stmts  
+{
+        let coord = $1 in
+        let coords = $2 in 
+        coord::coords
+}
 
 coord2d_stmt:
 | YC00 EQ Int eol 
   XC00 EQ Int eol  {
         let y:int = $3 in 
         let x:int = $7 in 
-        ()
+        let x,y,_ = ENCParseLib.proc_coords _state x y 0 in 
+        (x,y)
 }
 
 
 coord2d_stmts:
-| coord2d_stmt {()}
-| coord2d_stmts coord2d_stmt {()}
+| coord2d_stmt {let coord = $1 in [coord]}
+| coord2d_stmt coord2d_stmts {
+        let coord = $1 in 
+        let coords = $2 in 
+        coord::coords
+}
 
 vectattr_stmt:
 | ATTL EQ Int eol {
@@ -500,13 +516,19 @@ vectptr_stmt:
         let orientation  = DataLib.int_to_orientation $7 in
         let usage_indicator  = DataLib.int_to_usage_indicator $11 in  
         let topology_indicator  = DataLib.int_to_topology_indicator $15 in
-        let mask = $18 in 
-       () 
+        let mask = DataLib.int_to_mask $19 in 
+        {       
+                ptr=foreign_ptr;
+                orientation=orientation;
+                usage=usage_indicator;
+                topology=topology_indicator;
+                mask=mask;        
+        } 
 }
 
 vectptr_stmts:
-| vectptr_stmt {()}
-| vectptr_stmts vectptr_stmt {()}
+| vectptr_stmt {[$1]}
+| vectptr_stmt vectptr_stmts {$1::$2}
 
 featid_stmt:
 |        RCNM EQ Int eol                                {()}
@@ -630,16 +652,23 @@ stmt:
 
 }
 |        FIELD SG3D COLON DS3DCOORDS eol coord3d_stmts {
-  
+                let coords : (float*float*float) list = $6 in 
+                let _ = ENCParseLib.commit_coords _state (Vect3D coords) in 
+                ()
 }
 |        FIELD SG2D COLON DS2DCOORD eol coord2d_stmts   {
-    
+                let coords : (float*float) list = $6 in 
+                let _ = ENCParseLib.commit_coords _state (Vect2D coords) in 
+                ()
+
 } 
 |        FIELD ATTV COLON DSVECTATTR eol vectattr_stmts  {
-     
+                     
 }
 |        FIELD VRPT COLON DSVECTPTR eol vectptr_stmts  {
-    
+                let ptrs : geom_ptr list= $6 in 
+                let _ = ENCParseLib.commit_geom_rels _state ptrs in 
+                ()
 }   
 |        FIELD FRID COLON DSFEATID eol featid_stmts   {
    
