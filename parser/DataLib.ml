@@ -99,6 +99,13 @@ struct
                 | IUHarbor -> "harbor"
                 | IUBerthing -> "berthing"
         
+        let dataset_structure_to_string (e:data_struct_type) : string = match e with
+                | DSCartSpaghetti -> "cartographic-spaghetti"
+                | DSChainNode -> "chain-node"
+                | DSPlanarGraph -> "planar-graph"
+                | DSFullTopo -> "full-topology"
+                | DSIrrelevent -> "irrelevent" 
+
         let int_to_mask (i:int) : mask_type = match i with 
         | 1 -> MMask
         | 2 -> MShow

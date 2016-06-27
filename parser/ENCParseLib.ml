@@ -14,8 +14,8 @@ type parse_state = {
         mutable record_id: int option;
         mutable dataset_info : dataset_info;
         mutable vector_info : vector_record_info; 
-        geometry: (int,geom_entry) map;
-        spatial_relations : (vector_type*int,geom_rel list) map;
+        geometry: (geom_typed_id,geom_data) map;
+        spatial_relations : (geom_typed_id,geom_rel list) map;
 }
 
 
@@ -49,8 +49,14 @@ struct
                s.dataset_info.lex <- (f s.dataset_info.lex)
         
         let make_dataset (s:parse_state) = 
-                {info = s.dataset_info} 
-        
+                let ds = {info = s.dataset_info;
+                        geometry = MAP.make (); spatial_relations = MAP.make ();} 
+                in
+                MAP.iter s.geometry (fun k v -> stmt (MAP.put ds.geometry k v) ());
+                MAP.iter s.spatial_relations (fun k v -> stmt (MAP.put
+                        ds.spatial_relations k v) ());
+                ds
+
         let set_record (s:parse_state) (i:int) = 
                 let _ = s.record_id <- Some i in
                 ()
@@ -96,8 +102,9 @@ struct
                              begin
                                 assert(ptr.topology = TIContainingFace);
                                 assert(ptr_type = RVector(VFace));
-                                let vl = GFIsolatedNode(id) in
-                                let key = (VFace, id) in  
+                                let vl = GRFIsolatedNode(id) in
+                                let key = (GTFace id) in
+                                commit key vl;  
                                 ()
                              end
                         | VEdge ->
@@ -106,28 +113,28 @@ struct
                                     assert(ptr_type = RVector(VConnectedNode));
                                     match ptr.topology with
                                         | TIBeginNode ->
-                                                let vl =GEConnNode(Start,ptr_id) in 
-                                                let key = (VEdge,id) in 
+                                                let vl =GREConnNode(Start,ptr_id) in 
+                                                let key = (GTEdge id) in 
                                                 commit key vl;
                                                 ()
                                         | TIEndNode ->
-                                                let vl = GEConnNode(End,ptr_id) in 
-                                                let key = (VEdge,id) in 
+                                                let vl = GREConnNode(End,ptr_id) in 
+                                                let key = (GTEdge id) in 
                                                 commit key vl;
                                                 ()
                                         | TILeftFace -> 
                                              begin
                                                 assert (dataset_kind = DSFullTopo);
-                                                let vl = GEFace(Left,ptr_id) in
-                                                let key = (VEdge,id) in
+                                                let vl = GREFace(Left,ptr_id) in
+                                                let key = (GTEdge id) in
                                                 commit key vl;
                                                 ()
                                              end
                                         | TIRightFace -> 
                                              begin
                                                 assert (dataset_kind = DSFullTopo);
-                                                let vl = GEFace(Right,ptr_id) in
-                                                let key = (VEdge,id) in 
+                                                let vl = GREFace(Right,ptr_id) in
+                                                let key = (GTEdge id) in 
                                                 commit key vl;
                                                 () 
                                              end
@@ -137,8 +144,9 @@ struct
                                 assert(dataset_kind != DSCartSpaghetti);
                                 assert(ptr.topology = TIIrrelevent);
                                 assert(ptr_type = RVector(VEdge));
-                                let vl = GFEdge ptr_id in
-                                let key = (VFace, id) in 
+                                let vl = GRFEdge ptr_id in
+                                let key = (GTFace id) in 
+                                commit key vl;  
                                 ()
                              end
                                       
@@ -162,13 +170,16 @@ struct
                 let id = s.vector_info.id in
                 assert(id >= 0); 
                 let insert id coords = 
-                        let entry = match s.vector_info.typ with 
-                                | VIsolatedNode -> GIsolatedNode(coords) 
-                                | VConnectedNode -> GConnectedNode(coords) 
-                                | VEdge -> GEdge(coords)  
+                        let typ,v = match s.vector_info.typ with 
+                                | VIsolatedNode ->
+                                                (GTIsolatedNode id,GDCoord(coords)) 
+                                | VConnectedNode ->
+                                                (GTConnectedNode id,GDCoord(coords)) 
+                                | VEdge -> 
+                                                (GTEdge id, GDCoord(coords))  
                                 | _ -> error "commit_coords3d" "unexpected coordinate" 
                         in
-                        let _ = MAP.put s.geometry id entry in 
+                        let _ = MAP.put s.geometry typ v in 
                         ()
                 in
                 match (s.vector_info.op) with 

@@ -1,35 +1,7 @@
 open Yojson;;
 open Data;;
 open DataLib;;
-
-type dataset_info = {
-        mutable id : int;
-        mutable exchange : exchange_purpose;
-        mutable usage : intended_usage;
-        mutable name : string;
-        mutable edition: int;
-        mutable update: int;
-        mutable update_app_date : date option;
-        mutable issue_date : date option;
-        mutable app_profile : application_profile;
-        mutable agency_id : (int*(iho_object_id option));
-        mutable comment : string;
-        mutable stats : dataset_stats;
-        mutable lex : lexical_levels; 
-        mutable coord_info : dataset_coord_info;
-}
-
-let make_dataset_stats () =
-        {
-                n_meta = 0;
-                n_cartographic=0;
-                n_geo=0;
-                n_collection=0;
-                n_isolated_node=0;
-                n_connected_node=0;
-                n_edge=0;
-                n_face=0;
-        }
+open DataStructure;;
 
 module ENCJSONExporter =
 struct
@@ -67,14 +39,68 @@ struct
                         ("update_date", date_to_json s.update_app_date);
                         ("type",`String (DataLib.application_profile_to_string
                         s.app_profile));
+                        ("structure",`String (DataLib.dataset_structure_to_string
+                        s.structure));
                         ("comment",`String s.comment);
                         ("stats",export_dataset_stats s.stats);
                 ] in 
                assoc 
+        
+        let export_geom_data_to_json data =
+                match data with
+                | GDCoord(vt) ->
+                     begin
+                        match vt with
+                        | Vect3D(lst) ->
+                            let x,y,d = List.fold_left (fun (xl,yl,dl) (x,y,d) ->
+                                    ((`Float x)::xl,(`Float y)::yl,(`Float d)::dl)
+                             ) ([],[],[]) lst
+                            in
+                            `Assoc [("x",`List x);("y",`List y);("depth",`List d)]
+                        | Vect2D(lst) -> 
+                            let x,y = List.fold_left (fun (xl,yl) (x,y) ->
+                                    ((`Float x)::xl,(`Float y)::yl)
+                             ) ([],[]) lst
+                            in
+                            `Assoc [("x",`List x);("y",`List y)]
+
+                     end
+               | GDEmpty() -> `Null
+        
+        let export_geom_rels_to_json rels =
+               `Null
+
+        let export_dataset_geometry (geo:(geom_typed_id,geom_data) map)
+        (rels:(geom_typed_id,geom_rel list) map) : json = 
+                let add_el k v lst =
+                        (string_of_int k, v)::lst        
+                in
+                let f,e,c,i = MAP.fold geo (fun k v (f,e,c,i) ->
+                        let data = v in
+                        let rels :geom_rel list= if MAP.has rels k 
+                                then MAP.get rels k 
+                                else []
+                        in
+                        let data_json:json = export_geom_data_to_json data in
+                        let rel_json:json = export_geom_rels_to_json rels in
+                        let elem:json = `Assoc [("data",data_json);("rels",rel_json)] 
+                        in
+                        match k with 
+                        | GTIsolatedNode(id) -> (f,e,c,add_el id elem i)
+                        | GTConnectedNode(id) ->(f,e,add_el id elem c,i)
+                        | GTEdge(id) ->(f,add_el id elem e, c,i)
+                        | GTFace(id) ->(add_el id elem f, e, c, i)
+                ) ([],[],[],[]) 
+                in
+                `Assoc
+                [("faces",`Assoc f);("edges",`Assoc e);("conn_nodes",`Assoc c);("isol_nodes",`Assoc i)]
 
         let export_dataset (s:dataset) : json = 
-                let json_info = export_dataset_info s.info in 
-                `Assoc [("info",json_info)]
+                let json_info = export_dataset_info s.info in
+                let geom = export_dataset_geometry s.geometry
+                        s.spatial_relations 
+                in  
+                `Assoc [("info",json_info);("spatial",geom)]
         
         let json_to_string (s:json) = 
                 Yojson.to_string s

@@ -73,7 +73,32 @@ type vert_ref =  VRMLWaterSprings | VRMLLWaterSprings | VRMSeaLevel
         | VRIndianSpringLowWater | VRLWaterSprings | VRALAstroTide 
         | VRNLLWater | VRMLLWater | VRLWater | VRAMLWater | VRAMLLWater
         | VRMHWater | VRMHWaterSprings | VRHWater
+
+type coord = 
+        | Vect3D of (float*float*float) list
+        | Vect2D of (float*float) list 
+
+type side = Left | Right 
+type ending = Start | End 
+ 
+type geom_typed_id = 
+        | GTIsolatedNode of int
+        | GTConnectedNode of int
+        | GTEdge of int
+        | GTFace of int
+
+type geom_data = 
+        | GDCoord of coord
+        | GDEmpty of unit 
+
+
+type geom_rel = 
+        | GRFIsolatedNode of int
+        | GRFEdge of int        
+        | GREConnNode of ending*int
+        | GREFace of side*int
         
+      
 type dataset_coord_info = {
         mutable  horiz : horiz_ref;
         mutable  vert : vert_ref;
@@ -119,9 +144,12 @@ type dataset_info = {
         mutable structure : data_struct_type;
 }
 
-
 type dataset  = {
         info : dataset_info;
+        (*temporary information*)
+        mutable geometry: (geom_typed_id,geom_data) map;
+        mutable spatial_relations : (geom_typed_id,geom_rel list) map;
+
 }
 
 type output_type = 
@@ -141,31 +169,7 @@ type geom_ptr = {
         mask : mask_type;
         usage: usage_indicator;
 }
-type vector_ident = int
 
-type vector_2d = int
-type vector_3d = int
-
-type coord = 
-        | Vect3D of (float*float*float) list
-        | Vect2D of (float*float) list 
-
-type geom_entry = 
-        | GIsolatedNode of coord
-        | GEdge of coord 
-        | GConnectedNode of coord
-        | GFace of unit
-
-type side = Left | Right 
-type ending = Start | End 
-
-type geom_rel = 
-        | GFIsolatedNode of int
-        | GFEdge of int
-        
-        | GEConnNode of ending*int
-        | GEFace of side*int
-        
-        
+ 
 
 let stmt f r = let _ = f in r
