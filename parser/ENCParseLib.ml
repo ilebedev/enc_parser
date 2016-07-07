@@ -1,6 +1,7 @@
 open Data
 open DataLib
 open DataStructure
+open FeatureParseLib 
 
 exception ENCLibParseError of string*string
 
@@ -50,7 +51,9 @@ struct
         
         let make_dataset (s:parse_state) = 
                 let ds = {info = s.dataset_info;
-                        geometry = MAP.make (); spatial_relations = MAP.make ();} 
+                        geometry = MAP.make (); 
+                        spatial_relations = MAP.make ();
+                        feature_relations = MAP.make ();} 
                 in
                 MAP.iter s.geometry (fun k v -> stmt (MAP.put ds.geometry k v) ());
                 MAP.iter s.spatial_relations (fun k v -> stmt (MAP.put
@@ -63,7 +66,10 @@ struct
         
         let to_hex x = 
                 "0x"^x 
-        
+       
+
+                
+
         let proc_coords (s:parse_state) x y z = 
                 let cif = s.dataset_info.coord_info in
                 let res = cif.compilation_scale in 
@@ -71,7 +77,7 @@ struct
                 let yf:float = (float_of_int y) /. (float_of_int cif.coord_mult_factor) in
                 let zf:float = (float_of_int z) /. (float_of_int cif.sound_mult_factor) in                
                 match cif.coord_units with
-                | CULatLong -> xf,yf,zf
+                | CULatLong -> yf,xf,zf
                 | CUEastNorth -> xf,yf,zf
                 | CUUnitsOnChartMap -> xf,yf,zf
         

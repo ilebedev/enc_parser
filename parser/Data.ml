@@ -1,3 +1,4 @@
+open Common
 open DataStructure
 
 type exchange_purpose = EXNew | EXUpdate
@@ -6,9 +7,6 @@ type intended_usage = IUOverview | IUGeneral | IUCoastal
         | IUApproach | IUHarbor | IUBerthing | IUUnknown 
 
 type application_profile = APElecNavChart | APElecNavRevision | APIhoObjCatalog
-
-type month = September | October | November | December | January
-        | February | March | April | May | June | July | August 
 
 type data_struct_type = DSCartSpaghetti | 
         DSChainNode | DSPlanarGraph | DSFullTopo | DSIrrelevent
@@ -49,7 +47,6 @@ type mask =
 
 type foreign_ptr = record_type*int 
 
-type date = month*int*int 
 
 type iho_object_id = int
 
@@ -98,7 +95,12 @@ type geom_rel =
         | GREConnNode of ending*int
         | GREFace of side*int
         
-      
+type feature_group = FGSkinOfTheEarth | FGOther
+
+type feature_geometry_type = 
+        FGTPoint | FGTLine |FGTArea | FGTNone
+
+
 type dataset_coord_info = {
         mutable  horiz : horiz_ref;
         mutable  vert : vert_ref;
@@ -144,23 +146,41 @@ type dataset_info = {
         mutable structure : data_struct_type;
 }
 
+type feat_id = int
+
+type feat_data = {
+        typ : feature_geometry_type;
+        attrs : (int,string) map;
+        nat_attrs: (int,string) map;
+
+}
 type dataset  = {
         info : dataset_info;
         (*temporary information*)
         mutable geometry: (geom_typed_id,geom_data) map;
         mutable spatial_relations : (geom_typed_id,geom_rel list) map;
-
+        mutable feature_relations : (feat_id,feat_data) map;
 }
 
 type output_type = 
         | OutTypJson
-        | OutTypRaw
 
 type vector_record_info = {
         mutable typ : vector_type;
         mutable id : int;
         mutable op : update_instruction;  
 }
+
+type feature_record_info = {
+        mutable typ : feature_geometry_type;
+        mutable group : feature_group;
+        mutable label: int;
+        mutable op : update_instruction;
+        mutable agency:  int;
+        mutable feat_id: int;
+        mutable feat_subd: int;
+}
+(* Int String Map *)
 
 type geom_ptr = {
         ptr : foreign_ptr;

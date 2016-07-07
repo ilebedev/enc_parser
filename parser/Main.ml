@@ -51,7 +51,6 @@ let command =
       in
       let outtype = match filetype with
         |Some("json") -> OutTypJson 
-        |Some("raw") -> OutTypRaw
         | None -> OutTypJson
       in
       match bsb,enc with

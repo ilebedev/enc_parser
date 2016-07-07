@@ -1,10 +1,9 @@
 open Core
 open Camlp4
-
+open Common
 
 
 type ('a,'b) map = ('a, 'b) Hashtbl.t
-
 
 
 
@@ -43,13 +42,10 @@ struct
     let vap = f va in
     put x k vap
 
-  let size (type a) (type b) (x:(a,b) map) =
+  let size (type a) (type b) (x:(a,b) map) :int =
     Hashtbl.length x
 
-  let size x =
-    Hashtbl.length x
-
-  let empty x =
+   let empty x =
     size x = 0
 
   let clear x =
@@ -120,7 +116,7 @@ struct
     ()
 
   let singleton (type a) (type b) (x:(a,b) map): (a*b) =
-    if size x != 1 then
+    if size x <> 1 then
       error "MAP.singleton" "must have exactly one element."
     else
       let r = match fold x (fun x y r -> Some(x,y)) None with

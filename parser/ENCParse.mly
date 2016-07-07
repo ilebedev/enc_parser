@@ -17,9 +17,14 @@ ISDT,STED,PRSP,PSDN,PRED,PROF,AGEN,COMT
 
 %token DSSI,DSDATASTRUCT
 %{
+        open Common
+        
         open Data
-        open ENCParseLib
         open DataLib
+        open DataStructure 
+        
+        open FeatureParseLib
+        open ENCParseLib
 
         exception ENCParseError of string*string
         
@@ -492,19 +497,25 @@ coord2d_stmts:
         coord::coords
 }
 
-vectattr_stmt:
-| ATTL EQ Int eol {
-        let code = $3 in 
-        ()
-}
-| ATVL EQ String eol {
-        let desc = $3 in 
-        ()
+attr_stmt:
+| ATTL EQ Int eol 
+  ATVL EQ String eol {
+        let code = $3 in
+        let value = $7 in  
+        (code,value)
 }
 
-vectattr_stmts:
-| vectattr_stmt {()}
-| vectattr_stmts vectattr_stmt {()}
+attr_stmts:
+| attr_stmt {
+        let m : (int,string) map= MAP.make () in 
+        let k,v = $1 in 
+        MAP.put m k v  
+}
+| attr_stmts attr_stmt {
+        let m = $1 in 
+        let k,v = $2 in 
+        MAP.put m k v
+}
 
 vectptr_stmt:
 | NAME EQ Hex eol
@@ -551,14 +562,6 @@ featobjid_stmt:
 featobjid_stmts:
 | featobjid_stmt                {()}
 | featobjid_stmts featobjid_stmt {()}
-
-featattr_stmt:
-| ATTL EQ Int eol               {()}
-| ATVL EQ String eol               {()}
-
-featattr_stmts:
-| featattr_stmt                 {()}
-| featattr_stmts featattr_stmt {()}
 
 featspat_stmt:
 | NAME EQ Hex eol  {
@@ -662,8 +665,11 @@ stmt:
                 ()
 
 } 
-|        FIELD ATTV COLON DSVECTATTR eol vectattr_stmts  {
-                     
+|        FIELD ATTV COLON DSVECTATTR eol attr_stmts  {
+                let attrs : (int,string) map = $6 in 
+                let _ = FeatureParseLib.to_entity_type 
+                        (int_of_string (MAP.get attrs 402)) in
+                () 
 }
 |        FIELD VRPT COLON DSVECTPTR eol vectptr_stmts  {
                 let ptrs : geom_ptr list= $6 in 
@@ -671,13 +677,14 @@ stmt:
                 ()
 }   
 |        FIELD FRID COLON DSFEATID eol featid_stmts   {
-   
+                () 
 }
 |        FIELD FOID COLON DSFEATOBJID eol featobjid_stmts  {
-  
+                ()
 } 
-|        FIELD ATTF COLON DSFEATATTR eol featattr_stmts   {
-   
+|        FIELD ATTF COLON DSFEATATTR eol attr_stmts   { 
+                let attrs : (int,string) map = $6 in 
+                ()
 } 
 |        FIELD FSPT COLON DSFEATSPAT eol featspat_stmts  {
   
